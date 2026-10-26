@@ -28,12 +28,24 @@ struct AISearchTests {
         await model.load()
 
         #expect(service.queries == ["Café", "Coworking Space"])
-        #expect(model.deck.map(\.id) == ["c", "a"], "Nur die Auswahl der KI, in ihrer Reihenfolge")
+        #expect(model.deck.map(\.id) == ["c", "a", "b"], "Auswahl der KI zuerst, dann aufgefüllt")
         #expect(model.deck.first?.aiReason == "Ruhig und mit großen Tischen.")
         #expect(model.deck.last?.aiReason == nil)
         #expect(model.aiProvider == .claude)
         #expect(model.notice == nil)
         #expect(assistant.rankedCriteria == "ruhig, WLAN")
+    }
+
+    @Test func fewPicksAreFilledUpWithRemainingResults() async {
+        let model = SwipeDeckViewModel(
+            request: SearchRequest(query: "Bar", center: center, centerName: nil, radius: 2_000, cardsPerRound: 3,
+                                   onlyOpenNow: false, hideSaved: false, useAI: true),
+            service: RecordingPlacesService(places: places), library: FakeLibrary(),
+            assistant: StubAssistant(plan: AIQueryPlan(queries: ["Bar"], criteria: ""), picks: [AIPick(index: 1, reason: "Top")])
+        )
+        await model.load()
+        #expect(model.deck.map(\.id) == ["b", "a", "c"], "KI-Wahl zuerst, dann die übrigen Treffer")
+        #expect(model.deck.map(\.aiReason) == ["Top", nil, nil])
     }
 
     @Test func failingAIFallsBackToNormalSearch() async {

@@ -100,7 +100,7 @@ final class SwipeDeckViewModel {
                 let fallbackPlan = AIQueryPlan(queries: [request.query], criteria: "")
                 if let picks = await ai.rank(request.query, plan: plan ?? fallbackPlan, candidates: pool, limit: request.cardsPerRound + 5),
                    !picks.isEmpty {
-                    candidates = Self.ordered(pool, by: picks)
+                    candidates = Self.ordered(pool, by: picks, fillingUpTo: request.cardsPerRound)
                     aiProvider = ai.lastProvider
                 } else {
                     notice = String(localized: "KI gerade nicht erreichbar – normale Suche.")
@@ -202,13 +202,20 @@ final class SwipeDeckViewModel {
     }
 
     /// Ordnet die Kandidaten wie von der KI gewählt und hängt die Begründungen an.
-    nonisolated static func ordered(_ candidates: [Place], by picks: [AIPick]) -> [Place] {
-        picks.compactMap { pick in
-            guard candidates.indices.contains(pick.index) else { return nil }
+    /// Wählt die KI weniger Orte als eine Runde braucht, rücken die übrigen Treffer
+    /// (ohne Begründung, in der Reihenfolge von Apple Karten) dahinter auf.
+    nonisolated static func ordered(_ candidates: [Place], by picks: [AIPick], fillingUpTo minimum: Int = 0) -> [Place] {
+        var chosen = Set<Int>()
+        var result: [Place] = picks.compactMap { pick in
+            guard candidates.indices.contains(pick.index), chosen.insert(pick.index).inserted else { return nil }
             var place = candidates[pick.index]
             place.aiReason = pick.reason
             return place
         }
+        for index in candidates.indices where result.count < minimum && !chosen.contains(index) {
+            result.append(candidates[index])
+        }
+        return result
     }
 
     /// Doppelte und schon gemerkte Orte raus, nur echter Umkreis.
