@@ -1,12 +1,9 @@
 // Standardwerte. Eigene Werte gehören in Config/Secrets.xcconfig (nicht eingecheckt).
-SPOTSWIPE_BUNDLE_ID = de.example.spotswipe
-SPOTSWIPE_TEAM_ID =
-GOOGLE_PLACES_API_KEY =
+// Die App braucht keinen API-Key: Fotos und Bewertungen kommen über den Meanwhile-Proxy.
+SPOTSWIPE_BUNDLE_ID = com.avrundingdesign.spotswipe
+SPOTSWIPE_TEAM_ID = 8698DN5A64
 
-// iCloud-Sync braucht einen bezahlten Developer-Account (Team-ID).
-// Zum Einschalten in Secrets.xcconfig: SPOTSWIPE_CLOUDKIT = YES und
-// SPOTSWIPE_ENTITLEMENTS = SpotSwipe/SpotSwipe.entitlements
-SPOTSWIPE_CLOUDKIT = NO
-SPOTSWIPE_ENTITLEMENTS =
+// Bibliothek per iCloud synchronisieren (CloudKit-Container iCloud.<Bundle-ID>).
+SPOTSWIPE_CLOUDKIT = YES
 
 #include? "Secrets.xcconfig"

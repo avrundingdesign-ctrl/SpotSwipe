@@ -5,34 +5,29 @@ final class PhotoCache {
     static let shared = PhotoCache()
 
     private let cache = NSCache<NSString, UIImage>()
-    private var inFlight: [String: Task<UIImage?, Never>] = [:]
+    private var inFlight: [URL: Task<UIImage?, Never>] = [:]
 
     init() {
         cache.countLimit = 80
     }
 
-    func cachedImage(for photo: PlacePhoto, maxWidth: Int) -> UIImage? {
-        cache.object(forKey: Self.key(photo, maxWidth) as NSString)
+    func cachedImage(for photo: PlacePhoto) -> UIImage? {
+        cache.object(forKey: photo.url.absoluteString as NSString)
     }
 
-    func image(for photo: PlacePhoto, maxWidth: Int, using service: any PlacesService) async -> UIImage? {
-        let key = Self.key(photo, maxWidth)
-        if let image = cache.object(forKey: key as NSString) { return image }
-        if let running = inFlight[key] { return await running.value }
+    func image(for photo: PlacePhoto, using service: any PlacesService) async -> UIImage? {
+        if let image = cachedImage(for: photo) { return image }
+        if let running = inFlight[photo.url] { return await running.value }
 
         let task = Task<UIImage?, Never> {
-            guard let data = try? await service.photoData(for: photo, maxWidth: maxWidth),
+            guard let data = try? await service.photoData(for: photo),
                   let image = UIImage(data: data) else { return nil }
             return await image.byPreparingForDisplay() ?? image
         }
-        inFlight[key] = task
+        inFlight[photo.url] = task
         let image = await task.value
-        inFlight[key] = nil
-        if let image { cache.setObject(image, forKey: key as NSString) }
+        inFlight[photo.url] = nil
+        if let image { cache.setObject(image, forKey: photo.url.absoluteString as NSString) }
         return image
-    }
-
-    private static func key(_ photo: PlacePhoto, _ maxWidth: Int) -> String {
-        "\(photo.name)@\(maxWidth)"
     }
 }

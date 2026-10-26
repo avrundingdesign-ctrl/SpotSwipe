@@ -4,35 +4,32 @@ nonisolated struct PlaceSearchQuery: Hashable, Sendable {
     var text: String
     var center: GeoPoint
     var radius: Double
-    var onlyOpenNow: Bool
 }
 
-/// Quelle für Orte und Fotos. Produktiv Google Places, in Tests und ohne Key Beispieldaten.
+/// Quelle für Orte und Fotos. Produktiv Apple Karten plus Proxy, in Tests und Screenshots Beispieldaten.
 protocol PlacesService: AnyObject {
-    /// Wird unter den Karten angezeigt (Pflicht-Attribution bei Google).
+    /// Steht unter den Karten (Quellenangabe; Google verlangt sie für Fotos und Bewertungen).
     var attribution: String { get }
+
+    /// Grunddaten der Orte im Umkreis. Ohne Fotos und Bewertungen.
     func searchPlaces(_ query: PlaceSearchQuery) async throws -> [Place]
-    func placeDetails(id: String) async throws -> Place
-    func photoData(for photo: PlacePhoto, maxWidth: Int) async throws -> Data
+
+    /// Bewertung, Fotos und Öffnungszeiten. `nil`, wenn nichts zu bekommen ist
+    /// (Ort unbekannt, Simulator ohne App Attest, Tageslimit, offline).
+    func extras(for place: Place) async -> PlaceExtras?
+
+    /// Hinweis für die Oberfläche, falls zuletzt etwas nicht geklappt hat (einmalig).
+    func consumeNotice() async -> String?
+
+    func photoData(for photo: PlacePhoto) async throws -> Data
 }
 
 nonisolated enum PlacesError: LocalizedError, Equatable {
-    case invalidResponse
-    case http(status: Int, message: String?)
-    case decoding
+    case searchFailed
 
     var errorDescription: String? {
         switch self {
-        case .invalidResponse:
-            "Keine gültige Antwort vom Server."
-        case .http(let status, let message):
-            switch status {
-            case 401, 403: "Der Google-API-Key wurde abgelehnt. Prüfe Key und Beschränkungen."
-            case 429: "Zu viele Anfragen. Versuch es gleich noch einmal."
-            default: message ?? "Serverfehler (\(status))."
-            }
-        case .decoding:
-            "Die Antwort von Google konnte nicht gelesen werden."
+        case .searchFailed: "Apple Karten hat gerade nicht geantwortet. Bist du online?"
         }
     }
 }

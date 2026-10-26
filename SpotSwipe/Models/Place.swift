@@ -1,22 +1,27 @@
 import Foundation
 
 /// Ein Ort, wie ihn die Swipe-Karte und die Detailansicht zeigen.
+///
+/// Grunddaten (Name, Adresse, Telefon, Website, Koordinate) kommen kostenlos von
+/// Apple Karten. Bewertung, Fotos und Öffnungszeiten ergänzt Google über den
+/// Meanwhile-Proxy (`PlaceExtras`), sobald die Karte an der Reihe ist.
 nonisolated struct Place: Identifiable, Hashable, Sendable {
     let id: String
     var name: String
     var category: String?
     var address: String?
     var shortAddress: String?
+    var city: String?
     var location: GeoPoint
+    var phoneNumber: String?
+    var websiteURL: URL?
+
     var rating: Double?
     var userRatingCount: Int?
     var priceLevel: PriceLevel?
     var isOpenNow: Bool?
     var nextCloseTime: Date?
     var weekdayHours: [String] = []
-    var phoneNumber: String?
-    var websiteURL: URL?
-    var googleMapsURL: URL?
     var photos: [PlacePhoto] = []
 
     func distance(from point: GeoPoint) -> Double {
@@ -27,10 +32,21 @@ nonisolated struct Place: Identifiable, Hashable, Sendable {
         Formatters.openingStatus(isOpen: isOpenNow, nextClose: nextCloseTime)
     }
 
-    /// Link zum Teilen: Google-Maps-Seite des Orts, sonst Apple Maps.
-    var shareURL: URL {
-        googleMapsURL ?? appleMapsURL
+    /// Ergänzt die Google-Daten. Was der Proxy nicht kennt, bleibt wie es ist.
+    func merging(_ extras: PlaceExtras) -> Place {
+        var copy = self
+        copy.rating = extras.rating ?? rating
+        copy.userRatingCount = extras.ratingCount ?? userRatingCount
+        copy.priceLevel = extras.priceLevel ?? priceLevel
+        copy.isOpenNow = extras.isOpenNow ?? isOpenNow
+        copy.nextCloseTime = extras.nextCloseTime ?? nextCloseTime
+        if !extras.weekdayHours.isEmpty { copy.weekdayHours = extras.weekdayHours }
+        if !extras.photos.isEmpty { copy.photos = extras.photos }
+        return copy
     }
+
+    /// Link zum Teilen: der Ort in Apple Karten.
+    var shareURL: URL { appleMapsURL }
 
     var appleMapsURL: URL {
         var components = URLComponents(string: "https://maps.apple.com/")!
@@ -57,13 +73,21 @@ nonisolated struct Place: Identifiable, Hashable, Sendable {
     }
 }
 
+/// Ein Foto mit Pflicht-Attribution (Google verlangt den Urheber am Bild).
 nonisolated struct PlacePhoto: Hashable, Sendable {
-    /// Ressourcenname bei Google, z. B. `places/ChIJ…/photos/Aap…`.
-    let name: String
-    var width: Int?
-    var height: Int?
+    let url: URL
     var authorName: String?
-    var authorURL: URL?
+}
+
+/// Was Google über den Proxy zu einem Ort beisteuert.
+nonisolated struct PlaceExtras: Hashable, Sendable {
+    var rating: Double?
+    var ratingCount: Int?
+    var priceLevel: PriceLevel?
+    var isOpenNow: Bool?
+    var nextCloseTime: Date?
+    var weekdayHours: [String] = []
+    var photos: [PlacePhoto] = []
 }
 
 nonisolated enum PriceLevel: String, Sendable, CaseIterable {

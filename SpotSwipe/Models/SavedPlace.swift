@@ -6,8 +6,8 @@ import SwiftData
 /// CloudKit verlangt: alle Felder optional oder mit Standardwert, keine Unique-Constraints.
 /// Dubletten verhindert `SwiftDataPlaceLibrary` über `placeID`.
 ///
-/// Google erlaubt dauerhaftes Speichern eigentlich nur für die Place-ID. Der Rest ist ein
-/// Schnappschuss, den die Detailansicht regelmäßig über Place Details auffrischt.
+/// Bewertung, Fotos und Öffnungszeiten stammen von Google und sind nur ein Schnappschuss;
+/// die Detailansicht frischt sie regelmäßig über den Proxy auf.
 @Model
 final class SavedPlace {
     var placeID: String = ""
@@ -15,15 +15,15 @@ final class SavedPlace {
     var category: String?
     var address: String?
     var shortAddress: String?
+    var city: String?
     var latitude: Double = 0
     var longitude: Double = 0
+    var phoneNumber: String?
+    var websiteURLString: String?
     var rating: Double?
     var userRatingCount: Int?
     var priceLevelRaw: String?
-    var phoneNumber: String?
-    var websiteURLString: String?
-    var googleMapsURLString: String?
-    var photoNames: [String] = []
+    var photoURLStrings: [String] = []
     var photoAuthors: [String] = []
     var weekdayHours: [String] = []
     var searchTerm: String = ""
@@ -42,17 +42,21 @@ final class SavedPlace {
         category = place.category
         address = place.address
         shortAddress = place.shortAddress
+        city = place.city
         latitude = place.location.latitude
         longitude = place.location.longitude
-        rating = place.rating
-        userRatingCount = place.userRatingCount
-        priceLevelRaw = place.priceLevel?.rawValue
         phoneNumber = place.phoneNumber
         websiteURLString = place.websiteURL?.absoluteString
-        googleMapsURLString = place.googleMapsURL?.absoluteString
-        photoNames = place.photos.map(\.name)
-        photoAuthors = place.photos.map { $0.authorName ?? "" }
-        weekdayHours = place.weekdayHours
+        // Google-Daten nur überschreiben, wenn welche da sind – sonst
+        // löscht ein Ort ohne Proxy-Antwort den älteren Schnappschuss.
+        if place.rating != nil { rating = place.rating }
+        if place.userRatingCount != nil { userRatingCount = place.userRatingCount }
+        if let priceLevel = place.priceLevel { priceLevelRaw = priceLevel.rawValue }
+        if !place.photos.isEmpty {
+            photoURLStrings = place.photos.map(\.url.absoluteString)
+            photoAuthors = place.photos.map { $0.authorName ?? "" }
+        }
+        if !place.weekdayHours.isEmpty { weekdayHours = place.weekdayHours }
         snapshotFetchedAt = .now
     }
 
@@ -62,9 +66,10 @@ final class SavedPlace {
 
     /// Der gespeicherte Schnappschuss als `Place` (ohne Live-Öffnungsstatus).
     var asPlace: Place {
-        let photos = photoNames.enumerated().map { index, name in
+        let photos = photoURLStrings.enumerated().compactMap { index, string -> PlacePhoto? in
+            guard let url = URL(string: string) else { return nil }
             let author = photoAuthors.indices.contains(index) ? photoAuthors[index] : ""
-            return PlacePhoto(name: name, authorName: author.isEmpty ? nil : author)
+            return PlacePhoto(url: url, authorName: author.isEmpty ? nil : author)
         }
         return Place(
             id: placeID,
@@ -72,21 +77,20 @@ final class SavedPlace {
             category: category,
             address: address,
             shortAddress: shortAddress,
+            city: city,
             location: location,
+            phoneNumber: phoneNumber,
+            websiteURL: websiteURLString.flatMap(URL.init(string:)),
             rating: rating,
             userRatingCount: userRatingCount,
             priceLevel: priceLevelRaw.flatMap(PriceLevel.init(rawValue:)),
             weekdayHours: weekdayHours,
-            phoneNumber: phoneNumber,
-            websiteURL: websiteURLString.flatMap(URL.init(string:)),
-            googleMapsURL: googleMapsURLString.flatMap(URL.init(string:)),
             photos: photos
         )
     }
 
-    /// "Café · Köln": Kategorie und Ort aus der Kurzadresse.
+    /// "Café · Köln"
     var subtitle: String {
-        let city = shortAddress?.split(separator: ",").last.map { $0.trimmingCharacters(in: .whitespaces) }
-        return [category, city].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
+        [category, city].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · ")
     }
 }

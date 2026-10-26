@@ -2,15 +2,11 @@ import Foundation
 import SwiftUI
 
 /// Werte aus Info.plist (gespeist aus Config/*.xcconfig) und Launch-Argumenten.
+/// Die App enthält keinen API-Key: Google läuft über den Meanwhile-Proxy (siehe `ProxyService`).
 nonisolated enum AppConfig {
-    static var googlePlacesAPIKey: String {
-        let value = Bundle.main.object(forInfoDictionaryKey: "GooglePlacesAPIKey") as? String
-        return value?.trimmingCharacters(in: .whitespaces) ?? ""
-    }
-
-    /// Beispieldaten statt Google: per Launch-Argument `-useMockPlaces` oder automatisch ohne API-Key.
+    /// Beispieldaten statt Apple Karten und Proxy, per Launch-Argument `-useMockPlaces`.
     static var usesMockPlaces: Bool {
-        ProcessInfo.processInfo.arguments.contains("-useMockPlaces") || googlePlacesAPIKey.isEmpty
+        ProcessInfo.processInfo.arguments.contains("-useMockPlaces")
     }
 
     static var isCloudSyncEnabled: Bool {

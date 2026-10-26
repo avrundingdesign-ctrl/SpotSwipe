@@ -34,7 +34,7 @@ struct SwipeDeckView: View {
                 VStack(spacing: 0) {
                     topBar
                     deck
-                    Text(app.places.attribution)
+                    Text(model.notice ?? app.places.attribution)
                         .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(Theme.textSecondary)
                         .padding(.top, 10)
@@ -66,6 +66,7 @@ struct SwipeDeckView: View {
             #if DEBUG
             runDemo()
             #endif
+            await model.enrichUpcoming()
         }
         .sheet(item: $detailPlace) { place in
             NavigationStack {

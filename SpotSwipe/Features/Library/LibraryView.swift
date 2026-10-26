@@ -212,7 +212,7 @@ private struct LibraryCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            PlacePhotoView(photo: place.asPlace.photos.first, seed: place.placeID, maxWidth: 500)
+            PlacePhotoView(photo: place.asPlace.photos.first, seed: place.placeID)
                 .frame(height: 180)
                 .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
                 .overlay(alignment: .bottomLeading) {

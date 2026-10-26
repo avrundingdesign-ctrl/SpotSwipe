@@ -65,19 +65,13 @@ struct PhotoCarousel: View {
         .accessibilityHidden(true)
     }
 
-    @ViewBuilder
     private func authorLabel(_ author: String) -> some View {
-        let label = Text("Foto: \(author)")
+        Text("Foto: \(author)")
             .font(.system(size: 11, weight: .medium))
             .foregroundStyle(.white)
             .padding(.horizontal, 8)
             .padding(.vertical, 3)
             .background(.black.opacity(0.32), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-        if let url = current?.authorURL {
-            Link(destination: url) { label }
-        } else {
-            label
-        }
     }
 
     private func step(_ delta: Int) {
@@ -88,6 +82,6 @@ struct PhotoCarousel: View {
 
     private func prefetchNext() async {
         guard isActive, photos.indices.contains(index + 1) else { return }
-        _ = await PhotoCache.shared.image(for: photos[index + 1], maxWidth: 1200, using: app.places)
+        _ = await PhotoCache.shared.image(for: photos[index + 1], using: app.places)
     }
 }

@@ -18,9 +18,9 @@ enum DemoLaunch {
         let existing = (try? context.fetchCount(FetchDescriptor<SavedPlace>())) ?? 0
         guard existing == 0 else { return }
         let terms = ["Café", "Pizza", "Café", "Park", "Bar", "Café"]
-        let places = MockPlacesService.makePlaces(query: PlaceSearchQuery(text: "Café", center: center, radius: 2_000, onlyOpenNow: false))
+        let places = MockPlacesService.makePlaces(query: PlaceSearchQuery(text: "Café", center: center, radius: 2_000))
         for (index, place) in places.prefix(terms.count).enumerated() {
-            var copy = place
+            var copy = place.merging(MockPlacesService.extras(for: place))
             copy.category = terms[index]
             context.insert(SavedPlace(place: copy, searchTerm: terms[index], savedAt: .now.addingTimeInterval(-Double(index) * 3_600)))
         }

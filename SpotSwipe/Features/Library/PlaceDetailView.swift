@@ -257,12 +257,20 @@ struct PlaceDetailView: View {
 
     // MARK: - Aktionen
 
+    /// Holt Fotos, Bewertung und Öffnungsstatus nach: für gemerkte Orte höchstens einmal am Tag,
+    /// für Karten aus der Runde nur, wenn sie noch keine Fotos hatten.
     private func refreshIfNeeded() async {
-        guard let saved, Date.now.timeIntervalSince(saved.snapshotFetchedAt) > Self.refreshInterval else { return }
-        guard let fresh = try? await app.places.placeDetails(id: place.id) else { return }
-        place = fresh
-        saved.update(from: fresh)
-        try? context.save()
+        if let saved {
+            guard Date.now.timeIntervalSince(saved.snapshotFetchedAt) > Self.refreshInterval else { return }
+        } else {
+            guard place.photos.isEmpty else { return }
+        }
+        guard let extras = await app.places.extras(for: place) else { return }
+        place = place.merging(extras)
+        if let saved {
+            saved.update(from: place)
+            try? context.save()
+        }
     }
 
     private func remove() {

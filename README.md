@@ -2,7 +2,7 @@
 
 Orte per Swipe entdecken: Suchbegriff und Umkreis eingeben, „Go“, dann bis zu 10 Orte nacheinander als Karten wischen. Rechts = merken (landet in der Bibliothek), links = weiter.
 
-Herausgelöst aus der Swipe-Funktion von Meanwhile. Design: [SpotSwipe Design](https://claude.ai/artifact/4uajXUw5bcVU5xyKzQeCMU) (Variante A, Akzent Koralle `#FF5533`).
+Herausgelöst aus der Swipe-Funktion von Meanwhile (`~/Downloads/Maps_Ki`, intern „ZwischenZeit“). Design: [SpotSwipe Design](https://claude.ai/artifact/4uajXUw5bcVU5xyKzQeCMU) (Variante A, Akzent Koralle `#FF5533`).
 
 ## Projekt öffnen
 
@@ -14,25 +14,27 @@ xcodegen generate
 open SpotSwipe.xcodeproj
 ```
 
-Voraussetzungen: Xcode 26, iOS 26.
+Voraussetzungen: Xcode 26, iOS 26. Team (`8698DN5A64`) und Bundle-ID (`com.avrundingdesign.spotswipe`) stehen in `Config/App.xcconfig`; lokale Abweichungen gehören in `Config/Secrets.xcconfig` (Vorlage: `Secrets.example.xcconfig`).
 
-## Schlüssel und Konten
+## Woher die Daten kommen
 
-Alles Persönliche steht in `Config/Secrets.xcconfig` (in `.gitignore`). Vorlage: `Config/Secrets.example.xcconfig`.
+Wie in Meanwhile, ohne einen einzigen API-Key in der App:
 
-| Wert | Wofür | Ohne den Wert |
+| Was | Quelle | Kosten |
 | --- | --- | --- |
-| `GOOGLE_PLACES_API_KEY` | Orte, Fotos, Bewertungen über die Google Places API (New) | App läuft mit Beispieldaten |
-| `SPOTSWIPE_BUNDLE_ID`, `SPOTSWIPE_TEAM_ID` | Signieren für echte Geräte und iCloud | Simulator funktioniert trotzdem |
-| `SPOTSWIPE_CLOUDKIT = YES` + `SPOTSWIPE_ENTITLEMENTS = SpotSwipe/SpotSwipe.entitlements` | Bibliothek per iCloud synchronisieren | Bibliothek bleibt lokal |
+| Orte, Adresse, Telefon, Website | Apple Karten (`MKLocalSearch`) | kostenlos |
+| Fotos, Bewertung, Öffnungszeiten, Preisniveau | Google Places über den Meanwhile-Proxy `POST /v1/place` | Google-Key und Monatsbudget liegen auf dem Server |
+| Adresssuche, Karte, Route | Apple Karten | kostenlos |
 
-Google-Key einrichten:
+Der Proxy (`Maps_Ki/server`, läuft auf `zwischenzeit-api.cleanyourstuff.nl`) prüft jede Anfrage per **App Attest**. SpotSwipe ist dort über `APPLE_EXTRA_BUNDLE_IDS=com.avrundingdesign.spotswipe` zugelassen und teilt sich Tageslimit und Monatsbudget mit Meanwhile.
 
-1. In der Google Cloud Console ein Projekt mit Abrechnung anlegen und **Places API (New)** aktivieren.
-2. API-Key erstellen und beschränken: Anwendung = iOS-App mit der Bundle-ID oben, API = nur Places API (New).
-3. Budget-Alarm setzen. Pro Suche fallen 1 Text-Search-Anfrage (Enterprise-Felder wegen Telefon/Website/Bewertung) plus Foto-Abrufe an.
+App Attest gibt es nur auf echten Geräten. **Im Simulator** zeigt die App deshalb echte Orte von Apple Karten, aber ohne Fotos und Bewertungen. Für Screens mit Fotos: Beispieldaten per `-useMockPlaces`.
 
-Nach Änderungen an den xcconfig-Dateien: `xcodegen generate`.
+Beim Swipen erscheinen die Karten sofort mit den Apple-Daten; Fotos und Bewertung kommen Karte für Karte über den Proxy nach (oberste zuerst). Ist „Nur geöffnete Orte“ an, fliegen geschlossene Orte raus, bevor sie oben ankommen, und Orte aus der Reserve rücken nach.
+
+## iCloud
+
+Die Bibliothek synchronisiert per CloudKit (`iCloud.com.avrundingdesign.spotswipe`, Schalter `SPOTSWIPE_CLOUDKIT`). Container und App-ID legt Xcode beim ersten Build auf ein Gerät an (automatisches Signieren). Klappt CloudKit nicht, bleibt die Bibliothek lokal.
 
 ## Aufbau
 
@@ -41,17 +43,16 @@ SpotSwipe/
   App/            Einstieg, AppModel, Konfiguration, Debug-Startargumente
   DesignSystem/   Farben (Theme), Buttons, Chips, Foto-Ansicht
   Models/         Place, SavedPlace (SwiftData), Geo-Rechnung, Formatierung
-  Services/       Google Places, Beispieldaten, Standort, Foto-Cache, Bibliothek
+  Services/       Apple Karten + Proxy, App Attest, Beispieldaten, Standort, Foto-Cache, Bibliothek
   Features/       Home, Location, Swipe, Library, Settings
-SpotSwipeTests/   Swift Testing: Geo, Formatierung, Google-Antworten, Swipe-Logik
+SpotSwipeTests/   Swift Testing: Geo, Formatierung, Proxy-Antworten, Swipe-Logik
 ```
 
-Wichtige Entscheidungen:
+Entscheidungen:
 
 - **Eine Suche, eine Runde:** höchstens 5 oder 10 Karten (Einstellung), kein „Mehr laden“.
-- **Umkreis:** Google erlaubt bei der Text Search nur ein Rechteck. Wir fragen das umschließende Rechteck ab und filtern danach auf den echten Kreis.
-- **Fotos:** Wechsel per Tippen (links/rechts), weil horizontales Wischen Ja/Nein ist. Folgefotos lädt nur die oberste Karte vor.
-- **Gespeicherte Orte:** Google erlaubt dauerhaftes Speichern nur der Place-ID. Der Rest ist ein Schnappschuss, den die Detailansicht nach 24 h auffrischt. Vor dem Store-Release mit den Google-Bedingungen abgleichen.
+- **Fotos:** Wechsel per Tippen (links/rechts), weil horizontales Wischen Ja/Nein ist.
+- **Gespeicherte Orte:** Google-Daten sind ein Schnappschuss, den die Detailansicht nach 24 h über den Proxy auffrischt. Vor dem Store-Release mit den Google-Bedingungen abgleichen.
 
 ## Tests
 
@@ -62,12 +63,10 @@ xcodebuild -project SpotSwipe.xcodeproj -scheme SpotSwipe \
 
 ## Screens im Simulator prüfen (nur Debug)
 
-Startargumente springen direkt in einen Zustand:
-
 ```sh
-xcrun simctl launch booted de.example.spotswipe -useMockPlaces -demoSearch Café
-xcrun simctl launch booted de.example.spotswipe -demoSearch Café -demoScreen finished
-xcrun simctl launch booted de.example.spotswipe -demoSeedLibrary YES -demoTab library
+xcrun simctl launch booted com.avrundingdesign.spotswipe -useMockPlaces -demoSearch Café
+xcrun simctl launch booted com.avrundingdesign.spotswipe -useMockPlaces -demoSearch Café -demoScreen finished
+xcrun simctl launch booted com.avrundingdesign.spotswipe -useMockPlaces -demoSeedLibrary YES -demoTab library
 ```
 
 Weitere Werte für `-demoScreen`: `settings`, `location`, `map`, `detail`, `drag`.

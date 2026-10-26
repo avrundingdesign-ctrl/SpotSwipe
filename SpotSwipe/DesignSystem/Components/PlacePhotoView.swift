@@ -14,7 +14,6 @@ struct PhotoPlaceholder: View {
 struct PlacePhotoView: View {
     let photo: PlacePhoto?
     let seed: String
-    var maxWidth = 1200
 
     @Environment(AppModel.self) private var app
     @State private var image: UIImage?
@@ -31,7 +30,7 @@ struct PlacePhotoView: View {
                 }
             }
             .clipped()
-            .task(id: photo?.name) { await load() }
+            .task(id: photo?.url) { await load() }
             .accessibilityHidden(true)
     }
 
@@ -40,12 +39,12 @@ struct PlacePhotoView: View {
             image = nil
             return
         }
-        if let cached = PhotoCache.shared.cachedImage(for: photo, maxWidth: maxWidth) {
+        if let cached = PhotoCache.shared.cachedImage(for: photo) {
             image = cached
             return
         }
         image = nil
-        let loaded = await PhotoCache.shared.image(for: photo, maxWidth: maxWidth, using: app.places)
+        let loaded = await PhotoCache.shared.image(for: photo, using: app.places)
         withAnimation(.easeOut(duration: 0.25)) { image = loaded }
     }
 }

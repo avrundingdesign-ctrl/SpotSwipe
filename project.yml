@@ -22,7 +22,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(SPOTSWIPE_BUNDLE_ID)
         DEVELOPMENT_TEAM: $(SPOTSWIPE_TEAM_ID)
-        CODE_SIGN_ENTITLEMENTS: $(SPOTSWIPE_ENTITLEMENTS)
+        CODE_SIGN_ENTITLEMENTS: SpotSwipe/SpotSwipe.entitlements
         CODE_SIGN_STYLE: Automatic
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -37,7 +37,6 @@ targets:
         CFBundleDevelopmentRegion: de
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
-        GooglePlacesAPIKey: $(GOOGLE_PLACES_API_KEY)
         SpotSwipeCloudKitEnabled: $(SPOTSWIPE_CLOUDKIT)
         NSLocationWhenInUseUsageDescription: SpotSwipe nutzt deinen Standort, um Orte in deiner Nähe zu finden.
         ITSAppUsesNonExemptEncryption: false

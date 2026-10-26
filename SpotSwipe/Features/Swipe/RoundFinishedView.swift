@@ -68,7 +68,7 @@ struct RoundFinishedView: View {
                 ForEach(Array(shown.enumerated()), id: \.element.id) { index, place in
                     // -1,5 … 1,5 bei vier Fotos: symmetrisch um die Mitte gefächert
                     let centered = Double(index) - Double(shown.count - 1) / 2
-                    PlacePhotoView(photo: place.photos.first, seed: place.id, maxWidth: 400)
+                    PlacePhotoView(photo: place.photos.first, seed: place.id)
                         .frame(width: 104, height: 136)
                         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                         .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(Theme.surface, lineWidth: 3))

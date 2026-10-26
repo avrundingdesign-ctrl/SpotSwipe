@@ -22,7 +22,7 @@ final class AppModel {
         } else if AppConfig.usesMockPlaces {
             self.places = MockPlacesService()
         } else {
-            self.places = GooglePlacesService(apiKey: AppConfig.googlePlacesAPIKey)
+            self.places = AppleMapsPlacesService()
         }
         self.isMockData = self.places is MockPlacesService
         self.location = location
