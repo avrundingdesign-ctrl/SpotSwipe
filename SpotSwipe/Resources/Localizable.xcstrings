@@ -103,36 +103,36 @@
         }
       }
     },
-    "%@ – gefunden mit SpotSwipe": {
+    "%@ – gefunden mit Swipez": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ – found with SpotSwipe"
+            "value": "%@ – found with Swipez"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ – encontrado con SpotSwipe"
+            "value": "%@ – encontrado con Swipez"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ – trouvé avec SpotSwipe"
+            "value": "%@ – trouvé avec Swipez"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ – trovato con SpotSwipe"
+            "value": "%@ – trovato con Swipez"
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ – SpotSwipe ile bulundu"
+            "value": "%@ – Swipez ile bulundu"
           }
         }
       }
@@ -477,6 +477,74 @@
         }
       }
     },
+    "An": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activé"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attivo"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Açık"
+          }
+        }
+      }
+    },
+    "Anbieter": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Provider"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proveedor"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fournisseur"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fornitore"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sağlayıcı"
+          }
+        }
+      }
+    },
     "Anrufen": {
       "localizations": {
         "en": {
@@ -643,6 +711,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Haritada seç"
+          }
+        }
+      }
+    },
+    "Auf diesem iPhone nicht verfügbar – Swipez nutzt Claude.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not available on this iPhone – Swipez uses Claude."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No disponible en este iPhone: Swipez usa Claude."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non disponible sur cet iPhone – Swipez utilise Claude."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non disponibile su questo iPhone: Swipez usa Claude."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu iPhone’da kullanılamıyor – Swipez Claude’u kullanır."
           }
         }
       }
@@ -847,6 +949,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Zaten kaydettiğin mekânlar gizli."
+          }
+        }
+      }
+    },
+    "Beschreib einfach, was du suchst – etwa „ruhiges Café zum Arbeiten“. Die KI versteht deinen Wunsch, sucht passende Orte und sortiert sie danach.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Just describe what you’re looking for – like “quiet café to work in”. The AI understands your wish, finds matching places and sorts them accordingly."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Describe lo que buscas, por ejemplo «cafetería tranquila para trabajar». La IA entiende tu deseo, busca sitios adecuados y los ordena."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Décris simplement ce que tu cherches – par exemple « café calme pour travailler ». L’IA comprend ton souhait, trouve des lieux adaptés et les classe."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descrivi cosa cerchi, ad esempio «caffè tranquillo per lavorare». L’IA capisce il tuo desiderio, trova posti adatti e li ordina."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ne aradığını anlat, örneğin “çalışmak için sakin bir kafe”. YZ isteğini anlar, uygun mekânları bulur ve buna göre sıralar."
           }
         }
       }
@@ -1293,6 +1429,40 @@
         }
       }
     },
+    "Claude (Anthropic) bekommt deinen Suchwunsch und die Namen der gefundenen Orte – nicht deinen Standort. Ist Claude nicht erreichbar, übernimmt Apple Intelligence auf dem iPhone. Umstellen kannst du das in den Einstellungen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude (Anthropic) receives your search and the names of the places found – not your location. If Claude isn’t reachable, Apple Intelligence takes over on your iPhone. You can change this in Settings."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude (Anthropic) recibe tu búsqueda y los nombres de los sitios encontrados, no tu ubicación. Si Claude no está disponible, Apple Intelligence se encarga en el iPhone. Puedes cambiarlo en Ajustes."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude (Anthropic) reçoit ta recherche et les noms des lieux trouvés – pas ta position. Si Claude n’est pas joignable, Apple Intelligence prend le relais sur l’iPhone. Tu peux changer cela dans Réglages."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude (Anthropic) riceve la tua ricerca e i nomi dei posti trovati, non la tua posizione. Se Claude non è raggiungibile, subentra Apple Intelligence sull’iPhone. Puoi cambiarlo in Impostazioni."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude (Anthropic) aramanı ve bulunan mekânların adlarını alır – konumunu değil. Claude’a ulaşılamazsa iPhone’da Apple Intelligence devreye girer. Bunu Ayarlar’dan değiştirebilirsin."
+          }
+        }
+      }
+    },
     "Darstellung": {
       "localizations": {
         "en": {
@@ -1561,6 +1731,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ayrıntıları göster"
+          }
+        }
+      }
+    },
+    "Die Suche dauert dadurch etwas länger, die Treffer passen aber besser.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searching takes a little longer, but the results fit better."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La búsqueda tarda un poco más, pero los resultados encajan mejor."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La recherche prend un peu plus de temps, mais les résultats correspondent mieux."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La ricerca richiede un po’ più di tempo, ma i risultati sono più pertinenti."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arama biraz daha uzun sürer ama sonuçlar daha iyi eşleşir."
           }
         }
       }
@@ -1837,6 +2041,74 @@
         }
       }
     },
+    "Fallback: Apple Intelligence auf dem iPhone.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fallback: Apple Intelligence on your iPhone."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alternativa: Apple Intelligence en el iPhone."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solution de secours : Apple Intelligence sur l’iPhone."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alternativa: Apple Intelligence sull’iPhone."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yedek: iPhone’da Apple Intelligence."
+          }
+        }
+      }
+    },
+    "Fallback: keiner – Apple Intelligence ist auf diesem iPhone nicht verfügbar.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fallback: none – Apple Intelligence isn’t available on this iPhone."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alternativa: ninguna; Apple Intelligence no está disponible en este iPhone."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solution de secours : aucune – Apple Intelligence n’est pas disponible sur cet iPhone."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alternativa: nessuna, Apple Intelligence non è disponibile su questo iPhone."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yedek: yok – Apple Intelligence bu iPhone’da kullanılamıyor."
+          }
+        }
+      }
+    },
     "Festung": {
       "localizations": {
         "en": {
@@ -2041,36 +2313,36 @@
         }
       }
     },
-    "Für Fotos und Bewertungen fragt SpotSwipe über einen eigenen Server bei Google an. Dabei werden nur Name und Lage des Orts übertragen, nicht dein Standort.": {
+    "Für Fotos und Bewertungen fragt Swipez über einen eigenen Server bei Google an. Dabei werden nur Name und Lage des Orts übertragen, nicht dein Standort.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "For photos and ratings, SpotSwipe asks Google via its own server. Only the place’s name and location are sent – never yours."
+            "value": "For photos and ratings, Swipez asks Google via its own server. Only the place’s name and location are sent – never yours."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Para las fotos y valoraciones, SpotSwipe consulta a Google a través de un servidor propio. Solo se envían el nombre y la ubicación del sitio, nunca la tuya."
+            "value": "Para las fotos y valoraciones, Swipez consulta a Google a través de un servidor propio. Solo se envían el nombre y la ubicación del sitio, nunca la tuya."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pour les photos et les notes, SpotSwipe interroge Google via son propre serveur. Seuls le nom et l’emplacement du lieu sont transmis, jamais ta position."
+            "value": "Pour les photos et les notes, Swipez interroge Google via son propre serveur. Seuls le nom et l’emplacement du lieu sont transmis, jamais ta position."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Per foto e valutazioni SpotSwipe interroga Google tramite un proprio server. Vengono inviati solo nome e posizione del posto, mai la tua."
+            "value": "Per foto e valutazioni Swipez interroga Google tramite un proprio server. Vengono inviati solo nome e posizione del posto, mai la tua."
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Fotoğraflar ve puanlar için SpotSwipe kendi sunucusu üzerinden Google’a sorar. Yalnızca mekânın adı ve konumu gönderilir, seninki asla."
+            "value": "Fotoğraflar ve puanlar için Swipez kendi sunucusu üzerinden Google’a sorar. Yalnızca mekânın adı ve konumu gönderilir, seninki asla."
           }
         }
       }
@@ -2211,36 +2483,36 @@
         }
       }
     },
-    "Gemerkte Orte speichert SpotSwipe auf deinem Gerät und – wenn eingeschaltet – in deiner privaten iCloud. Es gibt kein Tracking und keine Werbung.": {
+    "Gemerkte Orte speichert Swipez auf deinem Gerät und – wenn eingeschaltet – in deiner privaten iCloud. Es gibt kein Tracking und keine Werbung.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "SpotSwipe stores saved places on your device and – if turned on – in your private iCloud. No tracking, no ads."
+            "value": "Swipez stores saved places on your device and – if turned on – in your private iCloud. No tracking, no ads."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "SpotSwipe guarda los sitios en tu dispositivo y, si lo activas, en tu iCloud privado. Sin rastreo ni anuncios."
+            "value": "Swipez guarda los sitios en tu dispositivo y, si lo activas, en tu iCloud privado. Sin rastreo ni anuncios."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "SpotSwipe enregistre les lieux gardés sur ton appareil et – si activé – dans ton iCloud privé. Ni pistage ni publicité."
+            "value": "Swipez enregistre les lieux gardés sur ton appareil et – si activé – dans ton iCloud privé. Ni pistage ni publicité."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "SpotSwipe salva i posti sul tuo dispositivo e, se attivato, nel tuo iCloud privato. Nessun tracciamento, nessuna pubblicità."
+            "value": "Swipez salva i posti sul tuo dispositivo e, se attivato, nel tuo iCloud privato. Nessun tracciamento, nessuna pubblicità."
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "SpotSwipe kaydedilen mekânları cihazında ve – açıksa – özel iCloud’unda saklar. Takip yok, reklam yok."
+            "value": "Swipez kaydedilen mekânları cihazında ve – açıksa – özel iCloud’unda saklar. Takip yok, reklam yok."
           }
         }
       }
@@ -2925,6 +3197,244 @@
         }
       }
     },
+    "KI gerade nicht erreichbar – normale Suche.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI not reachable right now – regular search."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IA no disponible ahora: búsqueda normal."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IA indisponible pour le moment – recherche normale."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IA non raggiungibile al momento: ricerca normale."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YZ şu an ulaşılamıyor – normal arama."
+          }
+        }
+      }
+    },
+    "KI sortiert nach Passung …": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI is sorting by best match…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La IA ordena por afinidad…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’IA classe par pertinence…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’IA ordina per pertinenza…"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YZ uygunluğa göre sıralıyor…"
+          }
+        }
+      }
+    },
+    "KI versteht deinen Wunsch …": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI is understanding your wish…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La IA entiende tu deseo…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’IA comprend ton souhait…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’IA sta capendo il tuo desiderio…"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YZ isteğini anlıyor…"
+          }
+        }
+      }
+    },
+    "KI-Suche": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI search"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Búsqueda con IA"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recherche IA"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ricerca con IA"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YZ araması"
+          }
+        }
+      }
+    },
+    "KI-Suche einschalten": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn on AI search"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activar búsqueda con IA"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activer la recherche IA"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attiva la ricerca con IA"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YZ aramasını aç"
+          }
+        }
+      }
+    },
+    "KI-Suche: Claude von Anthropic über unseren Server oder Apple Intelligence auf dem iPhone.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI search: Claude by Anthropic via our server, or Apple Intelligence on your iPhone."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Búsqueda con IA: Claude de Anthropic a través de nuestro servidor o Apple Intelligence en el iPhone."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recherche IA : Claude d’Anthropic via notre serveur ou Apple Intelligence sur l’iPhone."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ricerca con IA: Claude di Anthropic tramite il nostro server o Apple Intelligence sull’iPhone."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YZ araması: sunucumuz üzerinden Anthropic’in Claude’u veya iPhone’da Apple Intelligence."
+          }
+        }
+      }
+    },
+    "KI: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI: %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IA: %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IA : %@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IA: %@"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "YZ: %@"
+          }
+        }
+      }
+    },
     "Karte %lld von %lld": {
       "localizations": {
         "en": {
@@ -3265,6 +3775,74 @@
         }
       }
     },
+    "Lieber nicht": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not now"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora no"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas maintenant"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No, grazie"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Şimdi değil"
+          }
+        }
+      }
+    },
+    "Läuft auf dem iPhone, kostenlos und privat. Fallback: Claude.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runs on your iPhone, free and private. Fallback: Claude."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funciona en el iPhone, gratis y privado. Alternativa: Claude."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fonctionne sur l’iPhone, gratuit et privé. Solution de secours : Claude."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funziona sull’iPhone, gratis e privato. Alternativa: Claude."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "iPhone’da çalışır, ücretsiz ve gizli. Yedek: Claude."
+          }
+        }
+      }
+    },
     "MERKEN": {
       "localizations": {
         "en": {
@@ -3435,36 +4013,70 @@
         }
       }
     },
-    "Mit deinem Standort findet SpotSwipe Orte um dich herum. Du kannst auch jederzeit einen anderen Ort wählen.": {
+    "Mit KI dauert die Suche etwas länger, die Treffer passen aber besser. Bei Claude gehen dein Suchwunsch und die Namen der gefundenen Orte über unseren Server an Anthropic, nicht dein Standort. Apple Intelligence rechnet direkt auf dem iPhone.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "With your location, SpotSwipe finds places around you. You can also pick another place at any time."
+            "value": "With AI, searching takes a little longer, but the results fit better. With Claude, your search and the names of the places found go to Anthropic via our server – your location does not. Apple Intelligence runs directly on your iPhone."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Con tu ubicación, SpotSwipe encuentra sitios a tu alrededor. También puedes elegir otro lugar cuando quieras."
+            "value": "Con IA la búsqueda tarda un poco más, pero los resultados encajan mejor. Con Claude, tu búsqueda y los nombres de los sitios encontrados van a Anthropic a través de nuestro servidor; tu ubicación no. Apple Intelligence funciona directamente en el iPhone."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Avec ta position, SpotSwipe trouve des lieux autour de toi. Tu peux aussi choisir un autre endroit à tout moment."
+            "value": "Avec l’IA, la recherche prend un peu plus de temps, mais les résultats correspondent mieux. Avec Claude, ta recherche et les noms des lieux trouvés passent par notre serveur vers Anthropic – pas ta position. Apple Intelligence fonctionne directement sur l’iPhone."
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Con la tua posizione SpotSwipe trova posti intorno a te. Puoi anche scegliere un altro luogo in qualsiasi momento."
+            "value": "Con l’IA la ricerca richiede un po’ più di tempo, ma i risultati sono più pertinenti. Con Claude la tua ricerca e i nomi dei posti trovati vanno ad Anthropic tramite il nostro server, non la tua posizione. Apple Intelligence funziona direttamente sull’iPhone."
           }
         },
         "tr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Konumunla SpotSwipe çevrendeki mekânları bulur. İstediğin zaman başka bir yer de seçebilirsin."
+            "value": "YZ ile arama biraz daha uzun sürer ama sonuçlar daha iyi eşleşir. Claude ile araman ve bulunan mekânların adları sunucumuz üzerinden Anthropic’e gider, konumun gitmez. Apple Intelligence doğrudan iPhone’da çalışır."
+          }
+        }
+      }
+    },
+    "Mit deinem Standort findet Swipez Orte um dich herum. Du kannst auch jederzeit einen anderen Ort wählen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "With your location, Swipez finds places around you. You can also pick another place at any time."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con tu ubicación, Swipez encuentra sitios a tu alrededor. También puedes elegir otro lugar cuando quieras."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avec ta position, Swipez trouve des lieux autour de toi. Tu peux aussi choisir un autre endroit à tout moment."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con la tua posizione Swipez trova posti intorno a te. Puoi anche scegliere un altro luogo in qualsiasi momento."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Konumunla Swipez çevrendeki mekânları bulur. İstediğin zaman başka bir yer de seçebilirsin."
           }
         }
       }
@@ -4115,6 +4727,40 @@
         }
       }
     },
+    "Passt gut zu „%@“ – ruhig und gemütlich.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A good fit for “%@” – quiet and cosy."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encaja con «%@»: tranquilo y acogedor."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correspond bien à « %@ » – calme et chaleureux."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adatto a «%@»: tranquillo e accogliente."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@” için uygun – sakin ve rahat."
+          }
+        }
+      }
+    },
     "Pizza": {
       "localizations": {
         "en": {
@@ -4625,40 +5271,6 @@
         }
       }
     },
-    "SpotSwipe darf deinen Standort nicht verwenden. Wähle oben rechts einen Ort oder erlaube den Zugriff in den Einstellungen.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SpotSwipe isn’t allowed to use your location. Choose a place at the top right or allow access in Settings."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SpotSwipe no puede usar tu ubicación. Elige un sitio arriba a la derecha o permite el acceso en Ajustes."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SpotSwipe n’a pas accès à ta position. Choisis un lieu en haut à droite ou autorise l’accès dans Réglages."
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SpotSwipe non può usare la tua posizione. Scegli un luogo in alto a destra o consenti l’accesso in Impostazioni."
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SpotSwipe konumunu kullanamıyor. Sağ üstten bir yer seç veya Ayarlar’dan izin ver."
-          }
-        }
-      }
-    },
     "Sprache": {
       "localizations": {
         "en": {
@@ -4965,6 +5577,40 @@
         }
       }
     },
+    "Suche passende Orte …": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finding matching places…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscando sitios adecuados…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recherche de lieux adaptés…"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerco posti adatti…"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uygun mekânlar aranıyor…"
+          }
+        }
+      }
+    },
     "Suche „%@“ in der Nähe …": {
       "localizations": {
         "en": {
@@ -5063,6 +5709,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Kaydırma"
+          }
+        }
+      }
+    },
+    "Swipez darf deinen Standort nicht verwenden. Wähle oben rechts einen Ort oder erlaube den Zugriff in den Einstellungen.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swipez isn’t allowed to use your location. Choose a place at the top right or allow access in Settings."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swipez no puede usar tu ubicación. Elige un sitio arriba a la derecha o permite el acceso en Ajustes."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swipez n’a pas accès à ta position. Choisis un lieu en haut à droite ou autorise l’accès dans Réglages."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swipez non può usare la tua posizione. Scegli un luogo in alto a destra o consenti l’accesso in Impostazioni."
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Swipez konumunu kullanamıyor. Sağ üstten bir yer seç veya Ayarlar’dan izin ver."
           }
         }
       }
@@ -5301,6 +5981,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sürüm"
+          }
+        }
+      }
+    },
+    "Versteht Wünsche wie „ruhiges Café zum Arbeiten“": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Understands wishes like “quiet café to work in”"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entiende deseos como «cafetería tranquila para trabajar»"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprend des souhaits comme « café calme pour travailler »"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capisce richieste come «caffè tranquillo per lavorare»"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Çalışmak için sakin bir kafe” gibi istekleri anlar"
           }
         }
       }
@@ -6185,6 +6899,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "iCloud ile eşzamanlı"
+          }
+        }
+      }
+    },
+    "z. B. ruhiges Café zum Arbeiten": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. quiet café to work in"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "p. ej. cafetería tranquila para trabajar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ex. café calme pour travailler"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "es. caffè tranquillo per lavorare"
+          }
+        },
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "örn. çalışmak için sakin bir kafe"
           }
         }
       }

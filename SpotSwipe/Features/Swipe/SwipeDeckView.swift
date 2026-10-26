@@ -34,7 +34,7 @@ struct SwipeDeckView: View {
                 VStack(spacing: 0) {
                     topBar
                     deck
-                    Text(model.notice ?? app.places.attribution)
+                    Text(model.notice ?? attributionLine)
                         .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(Theme.textSecondary)
                         .padding(.top, 10)
@@ -239,17 +239,40 @@ struct SwipeDeckView: View {
             .fill(Theme.fill)
             .overlay {
                 VStack(spacing: 14) {
-                    ProgressView().controlSize(.large)
-                    Text("Suche „\(model.request.query)“ in der Nähe …")
+                    if model.request.useAI {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 34, weight: .semibold))
+                            .foregroundStyle(Theme.accent)
+                            .symbolEffect(.pulse)
+                    } else {
+                        ProgressView().controlSize(.large)
+                    }
+                    loadingText
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(Theme.textSecondary)
                         .multilineTextAlignment(.center)
+                        .contentTransition(.opacity)
+                        .animation(.easeInOut, value: model.loadingStep)
                 }
                 .padding(24)
             }
             .padding(.horizontal, 16)
             .padding(.top, 14)
             .padding(.bottom, 120)
+    }
+
+    private var loadingText: Text {
+        guard model.request.useAI else { return Text("Suche „\(model.request.query)“ in der Nähe …") }
+        switch model.loadingStep {
+        case .understanding: return Text("KI versteht deinen Wunsch …")
+        case .searching: return Text("Suche passende Orte …")
+        case .ranking: return Text("KI sortiert nach Passung …")
+        }
+    }
+
+    private var attributionLine: String {
+        guard let provider = model.aiProvider else { return app.places.attribution }
+        return app.places.attribution + " · " + String(localized: "KI: \(provider.label)")
     }
 
     private var emptyState: some View {

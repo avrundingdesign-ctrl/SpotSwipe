@@ -53,4 +53,9 @@ nonisolated enum AppLanguage {
     static var code: String {
         Bundle.main.preferredLocalizations.first.map { String($0.prefix(2)) } ?? "de"
     }
+
+    /// Englischer Name für KI-Prompts ("German", "Turkish" …).
+    static var englishName: String {
+        Locale(identifier: "en").localizedString(forLanguageCode: code) ?? "German"
+    }
 }

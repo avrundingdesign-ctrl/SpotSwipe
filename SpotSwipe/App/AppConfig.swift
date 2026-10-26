@@ -33,6 +33,9 @@ nonisolated enum SettingsKey {
     static let appearance = "appearance"
     static let recentSearches = "recentSearches"
     static let hasSeenIntro = "hasSeenIntro"
+    static let aiSearchEnabled = "aiSearchEnabled"
+    static let aiProvider = "aiProvider"
+    static let hasSeenAIInfo = "hasSeenAIInfo"
 }
 
 nonisolated enum CardsPerRound {

@@ -35,13 +35,13 @@ targets:
     info:
       path: SpotSwipe/Info.plist
       properties:
-        CFBundleDisplayName: SpotSwipe
+        CFBundleDisplayName: Swipez
         CFBundleDevelopmentRegion: de
         CFBundleLocalizations: [de, en, es, fr, it, tr]
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         SpotSwipeCloudKitEnabled: $(SPOTSWIPE_CLOUDKIT)
-        NSLocationWhenInUseUsageDescription: SpotSwipe nutzt deinen Standort, um Orte in deiner Nähe zu finden.
+        NSLocationWhenInUseUsageDescription: Swipez nutzt deinen Standort, um Orte in deiner Nähe zu finden.
         ITSAppUsesNonExemptEncryption: false
         UILaunchScreen:
           UIColorName: LaunchBackground

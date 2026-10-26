@@ -5,7 +5,8 @@ import SwiftData
 /// Nur im Debug-Build: Startargumente, die direkt in einen Zustand springen (für Screenshots im Simulator).
 ///
 ///     -demoSearch Café             startet sofort eine Swipe-Runde
-///     -demoScreen settings|location|map|detail|finished|drag
+///     -demoScreen settings|location|map|detail|finished|drag|aiinfo
+///     -aiSearchEnabled YES         KI-Suche an (mit -useMockPlaces: Beispiel-KI)
 ///     -demoTab library             öffnet die Bibliothek
 ///     -demoSeedLibrary YES         legt Beispielorte in der Bibliothek an
 ///     -hasSeenIntro NO -demoIntroPage 1   zeigt das Intro ab Seite 2
@@ -14,7 +15,7 @@ enum DemoLaunch {
     static var screen: String? { UserDefaults.standard.string(forKey: "demoScreen") }
     static var tab: String? { UserDefaults.standard.string(forKey: "demoTab") }
     static var seedsLibrary: Bool { UserDefaults.standard.bool(forKey: "demoSeedLibrary") }
-    /// `-demoIntroPage 2` öffnet das Intro auf Seite 3 (zusammen mit `-hasSeenIntro NO`).
+    /// `-demoIntroPage 2` öffnet das Intro auf Seite 3 von 5 (zusammen mit `-hasSeenIntro NO`).
     static var introPage: Int { UserDefaults.standard.integer(forKey: "demoIntroPage") }
 
     static func seedLibrary(into context: ModelContext, near center: GeoPoint) {

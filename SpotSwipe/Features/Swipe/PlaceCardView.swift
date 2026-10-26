@@ -37,6 +37,16 @@ struct PlaceCardView: View {
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
             metaRow
+            if let reason = place.aiReason {
+                Label {
+                    Text(reason).lineLimit(2)
+                } icon: {
+                    Image(systemName: "sparkles")
+                }
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(.white.opacity(0.92))
+                .accessibilityLabel(Text("KI: \(reason)"))
+            }
             CardActions(place: place, style: .onPhoto)
                 .padding(.top, 6)
         }

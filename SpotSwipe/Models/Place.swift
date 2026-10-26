@@ -23,6 +23,8 @@ nonisolated struct Place: Identifiable, Hashable, Sendable {
     var nextCloseTime: Date?
     var weekdayHours: [String] = []
     var photos: [PlacePhoto] = []
+    /// Ein Satz der KI, warum der Ort zur Suche passt (nur bei KI-Suche).
+    var aiReason: String?
 
     func distance(from point: GeoPoint) -> Double {
         GeoMath.distance(from: point, to: location)
@@ -125,6 +127,7 @@ nonisolated struct SearchRequest: Identifiable, Hashable, Sendable {
     var cardsPerRound: Int
     var onlyOpenNow: Bool
     var hideSaved: Bool
+    var useAI = false
 }
 
 nonisolated enum SearchRadius {

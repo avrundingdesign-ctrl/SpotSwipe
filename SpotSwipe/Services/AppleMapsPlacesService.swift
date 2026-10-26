@@ -15,6 +15,7 @@ final class AppleMapsPlacesService: PlacesService {
     private var cache: [String: PlaceExtras] = [:]
     /// Orte, die Google nicht eindeutig kennt – nicht erneut anfragen.
     private var missing: Set<String> = []
+    private var pendingNotice: String?
     private let session: URLSession = {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 20
@@ -53,7 +54,11 @@ final class AppleMapsPlacesService: PlacesService {
         ]
         if let city = place.city { payload["city"] = city }
 
-        guard let data = await ProxyService.shared.send("v1/place", payload) else { return nil }
+        let result = await ProxyService.shared.send("v1/place", payload)
+        guard let data = result.data else {
+            pendingNotice = Self.notice(for: result)
+            return nil
+        }
         guard let reply = try? JSONDecoder().decode(ProxyPlaceReply.self, from: data) else { return nil }
         guard let extras = reply.extras else {
             missing.insert(place.id)
@@ -64,7 +69,16 @@ final class AppleMapsPlacesService: PlacesService {
     }
 
     func consumeNotice() async -> String? {
-        await ProxyService.shared.consumeNotice()
+        defer { pendingNotice = nil }
+        return pendingNotice
+    }
+
+    private static func notice(for result: ProxyResult) -> String {
+        switch result {
+        case .dailyLimit: String(localized: "Tageslimit für Fotos erreicht – morgen geht es weiter.")
+        case .budget: String(localized: "Fotos pausieren gerade. Bitte später erneut versuchen.")
+        default: String(localized: "Fotos und Bewertungen sind gerade nicht verfügbar.")
+        }
     }
 
     /// Fertige Bild-URLs von Google (googleusercontent) – kosten kein Proxy-Kontingent.

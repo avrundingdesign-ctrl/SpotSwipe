@@ -1,8 +1,10 @@
-# SpotSwipe
+# Swipez
 
-Orte per Swipe entdecken: Suchbegriff und Umkreis eingeben, „Go“, dann bis zu 10 Orte nacheinander als Karten wischen. Rechts = merken (landet in der Bibliothek), links = weiter.
+**Swipe to discover the world.** Suchbegriff und Umkreis eingeben, „Go“, dann bis zu 10 Orte nacheinander als Karten wischen. Rechts = merken (landet in der Bibliothek), links = weiter.
 
-Herausgelöst aus der Swipe-Funktion von Meanwhile (`~/Downloads/Maps_Ki`, intern „ZwischenZeit“). Design: [SpotSwipe Design](https://claude.ai/artifact/4uajXUw5bcVU5xyKzQeCMU) (Variante A, Akzent Koralle `#FF5533`).
+Herausgelöst aus der Swipe-Funktion von Meanwhile (`~/Downloads/Maps_Ki`, intern „ZwischenZeit“). Design: [SpotSwipe Design](https://claude.ai/artifact/4uajXUw5bcVU5xyKzQeCMU), Farbwelt B · Ultramarin (`#2F4BFF`).
+
+Der App-Name für Nutzer ist **Swipez**. Projekt, Target, Ordner und Bundle-ID (`com.avrundingdesign.spotswipe`) heißen intern weiter SpotSwipe – die Bundle-ID ist beim Proxy und für iCloud registriert, ein Wechsel hätte nur Aufwand und keinen sichtbaren Effekt. Der Claim „Swipe to discover the world“ bleibt in allen Sprachen Englisch.
 
 ## Projekt öffnen
 
@@ -31,6 +33,18 @@ Der Proxy (`Maps_Ki/server`, läuft auf `zwischenzeit-api.cleanyourstuff.nl`) pr
 App Attest gibt es nur auf echten Geräten. **Im Simulator** zeigt die App deshalb echte Orte von Apple Karten, aber ohne Fotos und Bewertungen. Für Screens mit Fotos: Beispieldaten per `-useMockPlaces`.
 
 Beim Swipen erscheinen die Karten sofort mit den Apple-Daten; Fotos und Bewertung kommen Karte für Karte über den Proxy nach (oberste zuerst). Ist „Nur geöffnete Orte“ an, fliegen geschlossene Orte raus, bevor sie oben ankommen, und Orte aus der Reserve rücken nach.
+
+## KI-Suche
+
+Das ✨ im Suchfeld schaltet die KI-Suche ein (beim ersten Mal mit Hinweis: dauert länger, passt besser). Ablauf:
+
+1. **Verstehen:** Aus „ruhiges Café zum Arbeiten“ werden Suchbegriffe für Apple Karten („Café“, „Coworking Space“) plus Kriterien („ruhig, WLAN“).
+2. **Suchen:** Apple Karten mit diesen Begriffen.
+3. **Sortieren:** Die KI wählt aus bis zu 25 Treffern die passenden, in Reihenfolge, je mit einem Satz „warum“ (auf der Karte mit ✨).
+
+Anbieter (Einstellungen › KI-Suche): **Claude** über den Proxy (`/v1/spot-query`, `/v1/spot-rank`, Prompts fest im Server, Key nur dort, zählt aufs Tageskontingent und Monatsbudget von Meanwhile) oder **Apple Intelligence** auf dem Gerät. Der jeweils andere ist Fallback. Klappt beides nicht, läuft die normale Suche mit Hinweis weiter. Findet Apple Karten zu einem ganzen Satz nichts, sucht die App zusätzlich nach den einzelnen Wörtern.
+
+Im Simulator gibt es kein App Attest (also kein Claude); Apple Intelligence meldet sich dort zwar verfügbar, lehnt aber ab (`ModelManagerError 1026`). Zum Ansehen: `-useMockPlaces -aiSearchEnabled YES` (Beispiel-KI).
 
 ## Sprachen
 

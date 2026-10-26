@@ -10,6 +10,9 @@ struct SettingsView: View {
     @AppStorage(SettingsKey.hideSavedPlaces) private var hideSavedPlaces = true
     @AppStorage(SettingsKey.appearance) private var appearance = AppearanceMode.system.rawValue
     @AppStorage(SettingsKey.hasSeenIntro) private var hasSeenIntro = true
+    @AppStorage(SettingsKey.aiSearchEnabled) private var aiSearchEnabled = false
+    @AppStorage(SettingsKey.hasSeenAIInfo) private var hasSeenAIInfo = false
+    @AppStorage(SettingsKey.aiProvider) private var aiProvider = AIProvider.claude.rawValue
 
     @Environment(\.openURL) private var openURL
     @State private var confirmsClearing = false
@@ -50,6 +53,32 @@ struct SettingsView: View {
                         Toggle("Gemerkte ausblenden", isOn: $hideSavedPlaces).labelsHidden().tint(Theme.accent)
                     }
                 }
+
+                sectionTitle("KI-Suche")
+                SectionCard {
+                    row(title: "KI-Suche", subtitle: "Versteht Wünsche wie „ruhiges Café zum Arbeiten“") {
+                        Toggle("KI-Suche", isOn: $aiSearchEnabled).labelsHidden().tint(Theme.accent)
+                    }
+                    SectionDivider()
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Anbieter")
+                            .font(.system(size: 16, weight: .semibold))
+                        Picker("Anbieter", selection: $aiProvider) {
+                            ForEach(AIProvider.allCases) { Text(verbatim: $0.label).tag($0.rawValue) }
+                        }
+                        .pickerStyle(.segmented)
+                        Text(providerNote)
+                            .font(.system(size: 13))
+                            .foregroundStyle(Theme.textSecondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(16)
+                }
+                Text("Mit KI dauert die Suche etwas länger, die Treffer passen aber besser. Bei Claude gehen dein Suchwunsch und die Namen der gefundenen Orte über unseren Server an Anthropic, nicht dein Standort. Apple Intelligence rechnet direkt auf dem iPhone.")
+                    .font(.system(size: 13))
+                    .foregroundStyle(Theme.textSecondary)
+                    .padding(.horizontal, 4)
+                    .padding(.top, 8)
 
                 sectionTitle("Darstellung")
                 Picker("Darstellung", selection: $appearance) {
@@ -142,6 +171,9 @@ struct SettingsView: View {
         }
         .background(Theme.background.ignoresSafeArea())
         .navigationTitle("Einstellungen")
+        .onChange(of: aiSearchEnabled) { _, isOn in
+            if isOn { hasSeenAIInfo = true }
+        }
         .navigationBarTitleDisplayMode(.large)
         .toolbar(.hidden, for: .tabBar)
         .confirmationDialog("Alle gemerkten Orte löschen?", isPresented: $confirmsClearing, titleVisibility: .visible) {
@@ -156,6 +188,18 @@ struct SettingsView: View {
                 Text("Das lässt sich nicht rückgängig machen.")
             }
         }
+    }
+
+    private var providerNote: String {
+        let appleAvailable = AppleIntelligenceAssistant.isAvailable
+        if AIProvider(rawValue: aiProvider) == .apple {
+            return appleAvailable
+                ? String(localized: "Läuft auf dem iPhone, kostenlos und privat. Fallback: Claude.")
+                : String(localized: "Auf diesem iPhone nicht verfügbar – Swipez nutzt Claude.")
+        }
+        return appleAvailable
+            ? String(localized: "Fallback: Apple Intelligence auf dem iPhone.")
+            : String(localized: "Fallback: keiner – Apple Intelligence ist auf diesem iPhone nicht verfügbar.")
     }
 
     private func sectionTitle(_ title: LocalizedStringKey) -> some View {
@@ -196,9 +240,10 @@ struct SourcesView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Orte, Adressen, Karten und Routen: Apple Karten.")
+                Text("KI-Suche: Claude von Anthropic über unseren Server oder Apple Intelligence auf dem iPhone.")
                 Text("Bewertungen, Öffnungszeiten und Fotos: Google Maps. Die Fotos gehören den jeweils genannten Urheberinnen und Urhebern.")
-                Text("Für Fotos und Bewertungen fragt SpotSwipe über einen eigenen Server bei Google an. Dabei werden nur Name und Lage des Orts übertragen, nicht dein Standort.")
-                Text("Gemerkte Orte speichert SpotSwipe auf deinem Gerät und – wenn eingeschaltet – in deiner privaten iCloud. Es gibt kein Tracking und keine Werbung.")
+                Text("Für Fotos und Bewertungen fragt Swipez über einen eigenen Server bei Google an. Dabei werden nur Name und Lage des Orts übertragen, nicht dein Standort.")
+                Text("Gemerkte Orte speichert Swipez auf deinem Gerät und – wenn eingeschaltet – in deiner privaten iCloud. Es gibt kein Tracking und keine Werbung.")
             }
             .font(.system(size: 16))
             .foregroundStyle(Theme.textPrimary)

@@ -1,6 +1,19 @@
 import Foundation
 import os
 
+/// Ergebnis eines Proxy-Aufrufs. Die Aufrufer entscheiden selbst, welchen Hinweis sie zeigen.
+nonisolated enum ProxyResult: Sendable {
+    case ok(Data)
+    case unavailable
+    case dailyLimit
+    case budget
+
+    var data: Data? {
+        if case .ok(let data) = self { return data }
+        return nil
+    }
+}
+
 /// Transport zum Meanwhile-Proxy (`zwischenzeit-api.cleanyourstuff.nl`). Übernommen aus Meanwhile.
 ///
 /// Der Google-Key liegt nur auf dem Server. Die App ruft feste Endpunkte auf und
@@ -25,27 +38,6 @@ actor ProxyService {
         config.timeoutIntervalForResource = 60
         config.waitsForConnectivity = false
         session = URLSession(configuration: config)
-    }
-
-    // MARK: - Hinweise für die Oberfläche
-
-    enum Notice {
-        case unavailable, dailyLimit, budget
-
-        var text: String {
-            switch self {
-            case .unavailable: String(localized: "Fotos und Bewertungen sind gerade nicht verfügbar.")
-            case .dailyLimit: String(localized: "Tageslimit für Fotos erreicht – morgen geht es weiter.")
-            case .budget: String(localized: "Fotos pausieren gerade. Bitte später erneut versuchen.")
-            }
-        }
-    }
-
-    private var pendingNotice: Notice?
-
-    func consumeNotice() -> String? {
-        defer { pendingNotice = nil }
-        return pendingNotice?.text
     }
 
     // MARK: - Warteschlange
@@ -89,8 +81,8 @@ actor ProxyService {
 
     // MARK: - Fachliche Aufrufe
 
-    /// Sendet `payload` an `path` und liefert den Antwortkörper, bei jedem Fehler `nil`.
-    func send(_ path: String, _ payload: [String: any Sendable]) async -> Data? {
+    /// Sendet `payload` an `path`.
+    func send(_ path: String, _ payload: [String: any Sendable]) async -> ProxyResult {
         var payload = payload
         // Google liefert Öffnungszeiten in dieser Sprache ("Montag: 08:00–18:00").
         payload["lang"] = AppLanguage.code
@@ -98,14 +90,14 @@ actor ProxyService {
 
         // Genau einmal serialisieren: Die Signatur gilt für diese Bytes.
         guard let body = try? JSONSerialization.data(withJSONObject: payload, options: [.sortedKeys]) else {
-            return nil
+            return .unavailable
         }
         return await serialized { [self] in
             await perform(path: path, body: body, allowRetry: true)
         }
     }
 
-    private func perform(path: String, body: Data, allowRetry: Bool) async -> Data? {
+    private func perform(path: String, body: Data, allowRetry: Bool) async -> ProxyResult {
         var request = URLRequest(url: Self.baseURL.appendingPathComponent(path))
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -117,36 +109,30 @@ actor ProxyService {
             request.setValue(signed.assertion, forHTTPHeaderField: "X-Attest-Assertion")
         } catch {
             Self.log.error("App Attest fehlgeschlagen bei \(path, privacy: .public): \(String(describing: error), privacy: .public)")
-            pendingNotice = .unavailable
-            return nil
+            return .unavailable
         }
 
         guard let (data, response) = try? await session.data(for: request),
               let http = response as? HTTPURLResponse else {
             Self.log.error("Netzwerkfehler bei \(path, privacy: .public)")
-            pendingNotice = .unavailable
-            return nil
+            return .unavailable
         }
 
         switch http.statusCode {
         case 200:
-            return data
+            return .ok(data)
         case 401:
             // Der Proxy kennt das Gerät nicht mehr: einmal neu registrieren und wiederholen.
             await AttestService.shared.forget()
-            guard allowRetry else {
-                pendingNotice = .unavailable
-                return nil
-            }
+            guard allowRetry else { return .unavailable }
             return await perform(path: path, body: body, allowRetry: false)
         case 429:
-            pendingNotice = .dailyLimit
+            return .dailyLimit
         case 503:
-            pendingNotice = .budget
+            return .budget
         default:
             Self.log.error("Proxy antwortete \(http.statusCode) bei \(path, privacy: .public)")
-            pendingNotice = .unavailable
+            return .unavailable
         }
-        return nil
     }
 }

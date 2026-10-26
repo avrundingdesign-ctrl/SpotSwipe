@@ -15,7 +15,7 @@ struct CardActions: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            ShareLink(item: place.shareURL, subject: Text(place.name), message: Text("\(place.name) – gefunden mit SpotSwipe")) {
+            ShareLink(item: place.shareURL, subject: Text(place.name), message: Text("\(place.name) – gefunden mit Swipez")) {
                 tileLabel("Teilen", systemImage: "square.and.arrow.up")
             }
             .buttonStyle(.plain)

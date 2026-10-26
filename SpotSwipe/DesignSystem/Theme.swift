@@ -1,18 +1,19 @@
 import SwiftUI
 import UIKit
 
-/// Farben und Maße aus dem Design (claude.ai Design-Fläche „SpotSwipe Design“).
+/// Farben und Maße aus dem Design (claude.ai Design-Fläche „SpotSwipe Design“, Farbwelt B · Ultramarin).
 enum Theme {
-    static let background = Color(light: 0xF6F5F2, dark: 0x0E0E0F)
-    static let surface = Color(light: 0xFFFFFF, dark: 0x1B1B1D)
-    static let textPrimary = Color(light: 0x121212, dark: 0xF3F2EF)
-    static let textSecondary = Color(light: 0x66655F, dark: 0xA3A29C)
-    static let hairline = Color(light: 0xE7E5DF, dark: 0x2C2C2F)
-    static let fill = Color(light: 0xECEAE5, dark: 0x2A2A2E)
-    static let inverseText = Color(light: 0xFEFEFE, dark: 0x0E0E0F)
+    static let background = Color(light: 0xF4F6FB, dark: 0x0B0F1E)
+    static let surface = Color(light: 0xFFFFFF, dark: 0x161B2E)
+    static let textPrimary = Color(light: 0x0E1530, dark: 0xEEF1FA)
+    static let textSecondary = Color(light: 0x5A6280, dark: 0x9AA3BF)
+    static let hairline = Color(light: 0xE1E5EF, dark: 0x262D45)
+    static let fill = Color(light: 0xE8ECF5, dark: 0x1F2640)
+    static let inverseText = Color(light: 0xFEFEFE, dark: 0x0B0F1E)
     static let success = Color(light: 0x1F7A45, dark: 0x4CC37E)
     static let destructive = Color(light: 0xC2361B, dark: 0xFF7A5C)
-    static let accent = Color(hex: 0xFF5533)
+    /// Ultramarin; im Dunkeln etwas heller, damit es auf Tintenblau leuchtet.
+    static let accent = Color(light: 0x2F4BFF, dark: 0x5B74FF)
     static let star = Color(hex: 0xFFC940)
 
     static let cardRadius: CGFloat = 32

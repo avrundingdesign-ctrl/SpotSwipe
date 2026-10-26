@@ -98,6 +98,20 @@ struct PlaceDetailView: View {
                     .tracking(-1.2)
                     .accessibilityAddTraits(.isHeader)
                 metaRow
+                if let reason = place.aiReason {
+                    Label {
+                        Text(reason)
+                    } icon: {
+                        Image(systemName: "sparkles").foregroundStyle(Theme.accent)
+                    }
+                    .font(.system(size: 15, weight: .medium))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Theme.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .padding(.vertical, 4)
+                    .accessibilityLabel(Text("KI: \(reason)"))
+                }
                 if let status = place.openingStatus {
                     HStack(spacing: 7) {
                         Circle().frame(width: 7, height: 7)

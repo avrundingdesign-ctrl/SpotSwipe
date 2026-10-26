@@ -11,6 +11,8 @@ struct HomeView: View {
     @AppStorage(SettingsKey.onlyOpenNow) private var onlyOpenNow = true
     @AppStorage(SettingsKey.hideSavedPlaces) private var hideSavedPlaces = true
     @AppStorage(SettingsKey.recentSearches) private var recentStorage = ""
+    @AppStorage(SettingsKey.aiSearchEnabled) private var aiSearchEnabled = false
+    @AppStorage(SettingsKey.hasSeenAIInfo) private var hasSeenAIInfo = false
 
     @State private var query = ""
     @State private var radiusIndex = SearchRadius.defaultIndex
@@ -20,6 +22,7 @@ struct HomeView: View {
     @State private var showsSettings = false
     @State private var showsLocationHint = false
     @State private var activeSearch: SearchRequest?
+    @State private var showsAIInfo = false
     @FocusState private var isSearchFocused: Bool
 
     @ScaledMetric(relativeTo: .largeTitle) private var headlineSize: CGFloat = 46
@@ -84,7 +87,8 @@ struct HomeView: View {
                 model: SwipeDeckViewModel(
                     request: request,
                     service: app.places,
-                    library: SwiftDataPlaceLibrary(context: modelContext)
+                    library: SwiftDataPlaceLibrary(context: modelContext),
+                    assistant: app.assistant
                 ),
                 onShowLibrary: {
                     activeSearch = nil
@@ -103,12 +107,23 @@ struct HomeView: View {
                 }
             )
         }
+        .sheet(isPresented: $showsAIInfo) {
+            AIInfoSheet {
+                hasSeenAIInfo = true
+                aiSearchEnabled = true
+                showsAIInfo = false
+            } onCancel: {
+                showsAIInfo = false
+            }
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+        }
         .alert("Wo soll gesucht werden?", isPresented: $showsLocationHint) {
             Button("Standort wählen") { openLocationPanel() }
             Button("Abbrechen", role: .cancel) {}
         } message: {
             if app.location.isDenied {
-                Text("SpotSwipe darf deinen Standort nicht verwenden. Wähle oben rechts einen Ort oder erlaube den Zugriff in den Einstellungen.")
+                Text("Swipez darf deinen Standort nicht verwenden. Wähle oben rechts einen Ort oder erlaube den Zugriff in den Einstellungen.")
             } else {
                 Text("Dein Standort ist noch nicht bekannt. Wähle oben rechts einen Ort.")
             }
@@ -136,6 +151,7 @@ struct HomeView: View {
         case "settings": showsSettings = true
         case "location": openLocationPanel()
         case "map": isMapPickerOpen = true
+        case "aiinfo": showsAIInfo = true
         default: break
         }
         if let term = DemoLaunch.search {
@@ -189,7 +205,7 @@ struct HomeView: View {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 19, weight: .semibold))
                 .foregroundStyle(Theme.textSecondary)
-            TextField("Café, Pizza, Buchladen …", text: $query)
+            TextField(aiSearchEnabled ? "z. B. ruhiges Café zum Arbeiten" : "Café, Pizza, Buchladen …", text: $query)
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundStyle(Theme.textPrimary)
                 .focused($isSearchFocused)
@@ -212,12 +228,30 @@ struct HomeView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel("Eingabe löschen")
             }
+            Button(action: toggleAI) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(aiSearchEnabled ? Color.white : Theme.textSecondary)
+                    .frame(width: 36, height: 36)
+                    .background(aiSearchEnabled ? Theme.accent : Theme.fill, in: Circle())
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+                    .symbolEffect(.bounce, value: aiSearchEnabled)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("KI-Suche")
+            .accessibilityValue(aiSearchEnabled ? Text("An") : Text("Aus"))
+            .sensoryFeedback(.selection, trigger: aiSearchEnabled)
         }
         .padding(.leading, 20)
         .padding(.trailing, 10)
         .frame(height: 64)
         .background(Theme.surface, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).strokeBorder(Theme.hairline))
+        .overlay(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .strokeBorder(aiSearchEnabled ? Theme.accent : Theme.hairline, lineWidth: aiSearchEnabled ? 1.5 : 1)
+        )
+        .animation(.snappy, value: aiSearchEnabled)
         .shadow(color: .black.opacity(0.06), radius: 15, y: 10)
     }
 
@@ -297,8 +331,20 @@ struct HomeView: View {
             radius: SearchRadius.value(at: radiusIndex),
             cardsPerRound: CardsPerRound.options.contains(cardsPerRound) ? cardsPerRound : CardsPerRound.standard,
             onlyOpenNow: onlyOpenNow,
-            hideSaved: hideSavedPlaces
+            hideSaved: hideSavedPlaces,
+            useAI: aiSearchEnabled
         )
+    }
+
+    private func toggleAI() {
+        isSearchFocused = false
+        if aiSearchEnabled {
+            aiSearchEnabled = false
+        } else if hasSeenAIInfo {
+            aiSearchEnabled = true
+        } else {
+            showsAIInfo = true
+        }
     }
 
     private func openLocationPanel() {

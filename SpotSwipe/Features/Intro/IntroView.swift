@@ -1,13 +1,13 @@
 import SwiftUI
 
-/// Kurzes Intro beim ersten Start: suchen, wischen, merken – und am Ende der Standort.
+/// Kurzes Intro beim ersten Start: Begrüßung, suchen, wischen, merken – und am Ende der Standort.
 struct IntroView: View {
     var onFinish: () -> Void
 
     @Environment(AppModel.self) private var app
     @State private var page = 0
 
-    private let pageCount = 4
+    private let pageCount = 5
 
     var body: some View {
         VStack(spacing: 0) {
@@ -24,26 +24,28 @@ struct IntroView: View {
             .padding(.horizontal, 20)
 
             TabView(selection: $page) {
+                WelcomePage()
+                    .tag(0)
                 IntroPage(
                     title: "Wonach suchst du?",
                     text: "Café, Pizza, ein Park zum Lesen: Tipp ein, was du suchst, und wie weit du laufen willst."
                 ) { SearchIllustration() }
-                    .tag(0)
+                    .tag(1)
                 IntroPage(
                     title: "Wisch dich durch",
                     text: "Rechts heißt merken, links heißt weiter. Tipp aufs Foto für mehr Bilder."
                 ) { SwipeIllustration() }
-                    .tag(1)
+                    .tag(2)
                 IntroPage(
                     title: "Alles an einem Ort",
                     text: "Gemerkte Spots landen in deiner Bibliothek – mit Route, Website und Telefonnummer."
                 ) { LibraryIllustration() }
-                    .tag(2)
+                    .tag(3)
                 IntroPage(
                     title: "Was ist in deiner Nähe?",
-                    text: "Mit deinem Standort findet SpotSwipe Orte um dich herum. Du kannst auch jederzeit einen anderen Ort wählen."
+                    text: "Mit deinem Standort findet Swipez Orte um dich herum. Du kannst auch jederzeit einen anderen Ort wählen."
                 ) { LocationIllustration() }
-                    .tag(3)
+                    .tag(4)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             #if DEBUG
@@ -86,6 +88,61 @@ struct IntroView: View {
         .animation(.snappy, value: page)
         .accessibilityElement()
         .accessibilityLabel(Text("Seite \(page + 1) von \(pageCount)"))
+    }
+}
+
+/// Erste Seite: Marke und Claim. Der Claim bleibt in allen Sprachen Englisch.
+private struct WelcomePage: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            AppMark()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .accessibilityHidden(true)
+            VStack(spacing: 10) {
+                Text(verbatim: "Swipez")
+                    .font(.system(size: 52, weight: .heavy))
+                    .tracking(-2)
+                    .accessibilityAddTraits(.isHeader)
+                Text(verbatim: "Swipe to discover the world")
+                    .font(.system(size: 19, weight: .semibold))
+                    .foregroundStyle(Theme.accent)
+            }
+            .foregroundStyle(Theme.textPrimary)
+            .padding(.horizontal, 32)
+            .padding(.bottom, 28)
+        }
+    }
+}
+
+/// Das App-Icon als Vektor: zwei Karten mit Herz auf Ultramarin.
+private struct AppMark: View {
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 44, style: .continuous)
+                .fill(LinearGradient(colors: [Color(hex: 0x2F4BFF), Color(hex: 0x1A2CC7)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                .frame(width: 168, height: 168)
+                .shadow(color: Color(hex: 0x2F4BFF).opacity(0.35), radius: 30, y: 18)
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(.white.opacity(0.35))
+                .frame(width: 68, height: 90)
+                .rotationEffect(.degrees(-12))
+                .offset(x: -10, y: 2)
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(.white)
+                .frame(width: 68, height: 90)
+                .rotationEffect(.degrees(7))
+                .offset(x: 6)
+                .overlay {
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 30, weight: .bold))
+                        .foregroundStyle(Color(hex: 0x2F4BFF))
+                        .rotationEffect(.degrees(7))
+                        .offset(x: 6)
+                }
+        }
+        .phaseAnimator([0.0, 1.0]) { mark, phase in
+            mark.rotationEffect(.degrees(phase * 4 - 2))
+        } animation: { _ in .easeInOut(duration: 2.2) }
     }
 }
 

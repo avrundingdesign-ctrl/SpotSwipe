@@ -9,6 +9,8 @@ enum AppTab: Hashable {
 @Observable
 final class AppModel {
     let places: any PlacesService
+    /// KI-Suche: Claude über den Proxy, sonst Apple Intelligence (siehe Einstellungen).
+    let assistant: any SearchAssistant
     let location: LocationService
     let isMockData: Bool
 
@@ -25,6 +27,7 @@ final class AppModel {
             self.places = AppleMapsPlacesService()
         }
         self.isMockData = self.places is MockPlacesService
+        self.assistant = isMockData ? MockSearchAssistant() : FallbackAssistant()
         self.location = location
     }
 

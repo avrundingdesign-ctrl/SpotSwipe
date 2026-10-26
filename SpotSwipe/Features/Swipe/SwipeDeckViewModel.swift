@@ -14,6 +14,11 @@ final class SwipeDeckViewModel {
         case like, skip
     }
 
+    /// Was beim Laden gerade passiert – bei KI-Suche dauert es länger, deshalb sichtbar.
+    enum LoadingStep {
+        case understanding, searching, ranking
+    }
+
     private(set) var request: SearchRequest
     private(set) var phase: Phase = .loading
     private(set) var deck: [Place] = []
@@ -22,6 +27,9 @@ final class SwipeDeckViewModel {
     private(set) var liked: [Place] = []
     /// Hinweis vom Proxy (Tageslimit, nicht erreichbar …), ersetzt die Quellenzeile.
     private(set) var notice: String?
+    private(set) var loadingStep: LoadingStep = .searching
+    /// Wer die Treffer sortiert hat, falls die KI-Suche geklappt hat.
+    private(set) var aiProvider: AIProvider?
 
     /// Nachrücker für Orte, die sich beim Ergänzen als geschlossen herausstellen.
     @ObservationIgnored private var reserve: [Place] = []
@@ -29,11 +37,16 @@ final class SwipeDeckViewModel {
     @ObservationIgnored private var history: [(place: Place, decision: Decision)] = []
     @ObservationIgnored private let service: any PlacesService
     @ObservationIgnored private let library: any PlaceLibrary
+    @ObservationIgnored private let assistant: (any SearchAssistant)?
 
-    init(request: SearchRequest, service: any PlacesService, library: any PlaceLibrary) {
+    /// Höchstens so viele Orte gehen zur KI – mehr bringt kaum bessere Treffer, kostet aber Zeit.
+    static let maxAICandidates = 25
+
+    init(request: SearchRequest, service: any PlacesService, library: any PlaceLibrary, assistant: (any SearchAssistant)? = nil) {
         self.request = request
         self.service = service
         self.library = library
+        self.assistant = assistant
     }
 
     var remaining: ArraySlice<Place> { deck[min(position, deck.count)...] }
@@ -43,18 +56,59 @@ final class SwipeDeckViewModel {
 
     func load() async {
         phase = .loading
+        notice = nil
+        aiProvider = nil
+        let ai = request.useAI ? assistant : nil
         do {
-            let results = try await service.searchPlaces(PlaceSearchQuery(
-                text: request.query,
-                center: request.center,
-                radius: request.radius
-            ))
-            let candidates = Self.candidates(
+            var plan: AIQueryPlan?
+            if let ai {
+                loadingStep = .understanding
+                plan = await ai.plan(for: request.query)
+                debugLog("Plan: \(plan.map { "\($0.queries) / \($0.criteria)" } ?? "keiner") von \(ai.lastProvider?.label ?? "-")")
+            }
+
+            loadingStep = .searching
+            var results: [Place] = []
+            var lastError: (any Error)?
+            for term in plan?.queries ?? [request.query] {
+                do {
+                    results += try await service.searchPlaces(PlaceSearchQuery(text: term, center: request.center, radius: request.radius))
+                } catch {
+                    lastError = error
+                }
+            }
+            if results.isEmpty, let lastError { throw lastError }
+            if results.isEmpty {
+                // Apple Karten versteht keine ganzen Sätze. Ohne Treffer: einzelne Wörter versuchen
+                // („ruhiges Café zum Arbeiten“ → „Café“).
+                for word in Self.fallbackTerms(for: request.query) {
+                    results += (try? await service.searchPlaces(PlaceSearchQuery(text: word, center: request.center, radius: request.radius))) ?? []
+                }
+            }
+            debugLog("Apple Karten: \(results.count) Treffer für \(plan?.queries ?? [request.query])")
+
+            var candidates = Self.candidates(
                 from: results,
                 center: request.center,
                 radius: request.radius,
                 excluding: request.hideSaved ? library.savedPlaceIDs() : []
             )
+
+            if let ai, !candidates.isEmpty {
+                loadingStep = .ranking
+                let pool = Array(candidates.prefix(Self.maxAICandidates))
+                let fallbackPlan = AIQueryPlan(queries: [request.query], criteria: "")
+                if let picks = await ai.rank(request.query, plan: plan ?? fallbackPlan, candidates: pool, limit: request.cardsPerRound + 5),
+                   !picks.isEmpty {
+                    candidates = Self.ordered(pool, by: picks)
+                    aiProvider = ai.lastProvider
+                } else {
+                    notice = String(localized: "KI gerade nicht erreichbar – normale Suche.")
+                }
+            } else if ai != nil, plan == nil {
+                notice = String(localized: "KI gerade nicht erreichbar – normale Suche.")
+            }
+
             deck = Array(candidates.prefix(request.cardsPerRound))
             reserve = Array(candidates.dropFirst(request.cardsPerRound))
             position = 0
@@ -129,6 +183,31 @@ final class SwipeDeckViewModel {
         if let likedIndex = liked.firstIndex(where: { $0.id == id }) {
             liked[likedIndex] = merged
             library.save(merged, searchTerm: request.query)
+        }
+    }
+
+    private func debugLog(_ message: @autoclosure () -> String) {
+        #if DEBUG
+        print("[KI-Suche] \(message())")
+        #endif
+    }
+
+    /// Einzelwörter als Ersatz-Suchbegriffe: mindestens drei Buchstaben („Bar“), höchstens vier Wörter, ohne Dubletten.
+    /// Ein einzelnes Wort ergibt keinen Ersatz – dafür wurde schon gesucht.
+    nonisolated static func fallbackTerms(for query: String) -> [String] {
+        let words = query.split(whereSeparator: { !$0.isLetter && !$0.isNumber }).map(String.init)
+        guard words.count > 1 else { return [] }
+        var seen = Set<String>()
+        return Array(words.filter { $0.count >= 3 && seen.insert($0.lowercased()).inserted }.prefix(4))
+    }
+
+    /// Ordnet die Kandidaten wie von der KI gewählt und hängt die Begründungen an.
+    nonisolated static func ordered(_ candidates: [Place], by picks: [AIPick]) -> [Place] {
+        picks.compactMap { pick in
+            guard candidates.indices.contains(pick.index) else { return nil }
+            var place = candidates[pick.index]
+            place.aiReason = pick.reason
+            return place
         }
     }
 

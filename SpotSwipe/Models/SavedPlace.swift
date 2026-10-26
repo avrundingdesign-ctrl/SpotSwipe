@@ -26,6 +26,7 @@ final class SavedPlace {
     var photoURLStrings: [String] = []
     var photoAuthors: [String] = []
     var weekdayHours: [String] = []
+    var aiReason: String?
     var searchTerm: String = ""
     var savedAt: Date = Date.now
     var snapshotFetchedAt: Date = Date.now
@@ -57,6 +58,7 @@ final class SavedPlace {
             photoAuthors = place.photos.map { $0.authorName ?? "" }
         }
         if !place.weekdayHours.isEmpty { weekdayHours = place.weekdayHours }
+        if let reason = place.aiReason { aiReason = reason }
         snapshotFetchedAt = .now
     }
 
@@ -85,7 +87,8 @@ final class SavedPlace {
             userRatingCount: userRatingCount,
             priceLevel: priceLevelRaw.flatMap(PriceLevel.init(rawValue:)),
             weekdayHours: weekdayHours,
-            photos: photos
+            photos: photos,
+            aiReason: aiReason
         )
     }
 
