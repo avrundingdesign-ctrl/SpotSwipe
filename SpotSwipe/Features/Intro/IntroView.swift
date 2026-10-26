@@ -114,35 +114,19 @@ private struct WelcomePage: View {
     }
 }
 
-/// Das App-Icon als Vektor: zwei Karten mit Herz auf Ultramarin.
+/// Das App-Icon (Asset „AppMark“, dieselbe Grafik wie das Home-Bildschirm-Icon).
 private struct AppMark: View {
     var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 44, style: .continuous)
-                .fill(LinearGradient(colors: [Color(hex: 0x2F4BFF), Color(hex: 0x1A2CC7)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                .frame(width: 168, height: 168)
-                .shadow(color: Color(hex: 0x2F4BFF).opacity(0.35), radius: 30, y: 18)
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(.white.opacity(0.35))
-                .frame(width: 68, height: 90)
-                .rotationEffect(.degrees(-12))
-                .offset(x: -10, y: 2)
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(.white)
-                .frame(width: 68, height: 90)
-                .rotationEffect(.degrees(7))
-                .offset(x: 6)
-                .overlay {
-                    Image(systemName: "heart.fill")
-                        .font(.system(size: 30, weight: .bold))
-                        .foregroundStyle(Color(hex: 0x2F4BFF))
-                        .rotationEffect(.degrees(7))
-                        .offset(x: 6)
-                }
-        }
-        .phaseAnimator([0.0, 1.0]) { mark, phase in
-            mark.rotationEffect(.degrees(phase * 4 - 2))
-        } animation: { _ in .easeInOut(duration: 2.2) }
+        Image("AppMark")
+            .resizable()
+            .scaledToFit()
+            .frame(width: 168, height: 168)
+            .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 40, style: .continuous).strokeBorder(Theme.hairline))
+            .shadow(color: Color(hex: 0x2F4BFF).opacity(0.18), radius: 28, y: 16)
+            .phaseAnimator([0.0, 1.0]) { mark, phase in
+                mark.rotationEffect(.degrees(phase * 4 - 2))
+            } animation: { _ in .easeInOut(duration: 2.2) }
     }
 }
 
