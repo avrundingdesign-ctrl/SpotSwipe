@@ -8,8 +8,8 @@ final class AppleMapsPlacesService: PlacesService {
 
     var attribution: String {
         AttestService.isSupported
-            ? "Orte: Apple Karten · Fotos & Bewertungen: Google"
-            : "Orte: Apple Karten · Fotos nur auf dem iPhone"
+            ? String(localized: "Orte: Apple Karten · Fotos & Bewertungen: Google")
+            : String(localized: "Orte: Apple Karten · Fotos nur auf dem iPhone")
     }
 
     private var cache: [String: PlaceExtras] = [:]
@@ -94,15 +94,42 @@ final class AppleMapsPlacesService: PlacesService {
     }
 
     private static let categoryNames: [MKPointOfInterestCategory: String] = [
-        .cafe: "Café", .bakery: "Bäckerei", .restaurant: "Restaurant", .nightlife: "Bar",
-        .brewery: "Brauerei", .winery: "Weingut", .distillery: "Destillerie", .foodMarket: "Markt",
-        .park: "Park", .nationalPark: "Nationalpark", .beach: "Strand", .hiking: "Wandern",
-        .museum: "Museum", .theater: "Theater", .movieTheater: "Kino", .musicVenue: "Konzerte",
-        .landmark: "Sehenswürdigkeit", .castle: "Burg", .fortress: "Festung", .nationalMonument: "Denkmal",
-        .library: "Bibliothek", .zoo: "Zoo", .aquarium: "Aquarium", .planetarium: "Planetarium",
-        .amusementPark: "Freizeitpark", .fairground: "Kirmes", .store: "Laden", .spa: "Spa",
-        .fitnessCenter: "Fitness", .swimming: "Schwimmen", .bowling: "Bowling", .miniGolf: "Minigolf",
-        .rockClimbing: "Klettern", .hotel: "Hotel", .marina: "Hafen", .stadium: "Stadion"
+        .cafe: String(localized: "Café", comment: "Kategorie"),
+        .bakery: String(localized: "Bäckerei", comment: "Kategorie"),
+        .restaurant: String(localized: "Restaurant", comment: "Kategorie"),
+        .nightlife: String(localized: "Bar", comment: "Kategorie"),
+        .brewery: String(localized: "Brauerei", comment: "Kategorie"),
+        .winery: String(localized: "Weingut", comment: "Kategorie"),
+        .distillery: String(localized: "Destillerie", comment: "Kategorie"),
+        .foodMarket: String(localized: "Markt", comment: "Kategorie"),
+        .park: String(localized: "Park", comment: "Kategorie"),
+        .nationalPark: String(localized: "Nationalpark", comment: "Kategorie"),
+        .beach: String(localized: "Strand", comment: "Kategorie"),
+        .hiking: String(localized: "Wandern", comment: "Kategorie"),
+        .museum: String(localized: "Museum", comment: "Kategorie"),
+        .theater: String(localized: "Theater", comment: "Kategorie"),
+        .movieTheater: String(localized: "Kino", comment: "Kategorie"),
+        .musicVenue: String(localized: "Konzerte", comment: "Kategorie"),
+        .landmark: String(localized: "Sehenswürdigkeit", comment: "Kategorie"),
+        .castle: String(localized: "Burg", comment: "Kategorie"),
+        .fortress: String(localized: "Festung", comment: "Kategorie"),
+        .nationalMonument: String(localized: "Denkmal", comment: "Kategorie"),
+        .library: String(localized: "Bücherei", comment: "Kategorie"),
+        .zoo: String(localized: "Zoo", comment: "Kategorie"),
+        .aquarium: String(localized: "Aquarium", comment: "Kategorie"),
+        .planetarium: String(localized: "Planetarium", comment: "Kategorie"),
+        .amusementPark: String(localized: "Freizeitpark", comment: "Kategorie"),
+        .fairground: String(localized: "Kirmes", comment: "Kategorie"),
+        .store: String(localized: "Laden", comment: "Kategorie"),
+        .spa: String(localized: "Spa", comment: "Kategorie"),
+        .fitnessCenter: String(localized: "Fitness", comment: "Kategorie"),
+        .swimming: String(localized: "Schwimmen", comment: "Kategorie"),
+        .bowling: String(localized: "Bowling", comment: "Kategorie"),
+        .miniGolf: String(localized: "Minigolf", comment: "Kategorie"),
+        .rockClimbing: String(localized: "Klettern", comment: "Kategorie"),
+        .hotel: String(localized: "Hotel", comment: "Kategorie"),
+        .marina: String(localized: "Hafen", comment: "Kategorie"),
+        .stadium: String(localized: "Stadion", comment: "Kategorie")
     ]
 
     static func categoryName(for category: MKPointOfInterestCategory) -> String? {

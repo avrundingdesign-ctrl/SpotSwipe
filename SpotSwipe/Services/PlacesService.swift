@@ -29,7 +29,7 @@ nonisolated enum PlacesError: LocalizedError, Equatable {
 
     var errorDescription: String? {
         switch self {
-        case .searchFailed: "Apple Karten hat gerade nicht geantwortet. Bist du online?"
+        case .searchFailed: String(localized: "Apple Karten hat gerade nicht geantwortet. Bist du online?")
         }
     }
 }

@@ -32,6 +32,16 @@ App Attest gibt es nur auf echten Geräten. **Im Simulator** zeigt die App desha
 
 Beim Swipen erscheinen die Karten sofort mit den Apple-Daten; Fotos und Bewertung kommen Karte für Karte über den Proxy nach (oberste zuerst). Ist „Nur geöffnete Orte“ an, fliegen geschlossene Orte raus, bevor sie oben ankommen, und Orte aus der Reserve rücken nach.
 
+## Sprachen
+
+Deutsch (Quelle), Englisch, Spanisch, Französisch, Italienisch, Türkisch – in `SpotSwipe/Resources/Localizable.xcstrings` und `InfoPlist.xcstrings`. Die Sprache folgt dem iPhone; pro App lässt sie sich unter *Einstellungen › SpotSwipe › Sprache* ändern (in der App: Einstellungen › Sprache).
+
+Neue Texte: in SwiftUI einfach als Literal schreiben (`Text("…")`), in normalem Code `String(localized: "…")`. Xcode trägt neue Schlüssel beim Bauen in den Katalog ein; danach die fünf Übersetzungen ergänzen. Öffnungszeiten kommen von Google in der App-Sprache (Proxy: `lang`).
+
+## Intro
+
+Beim ersten Start erklären vier Seiten Suchen, Wischen und Bibliothek und fragen am Ende nach dem Standort. Erneut ansehen: Einstellungen › Über › Intro noch einmal ansehen.
+
 ## iCloud
 
 Die Bibliothek synchronisiert per CloudKit (`iCloud.com.avrundingdesign.spotswipe`, Schalter `SPOTSWIPE_CLOUDKIT`). Container und App-ID legt Xcode beim ersten Build auf ein Gerät an (automatisches Signieren). Klappt CloudKit nicht, bleibt die Bibliothek lokal.
@@ -69,4 +79,4 @@ xcrun simctl launch booted com.avrundingdesign.spotswipe -useMockPlaces -demoSea
 xcrun simctl launch booted com.avrundingdesign.spotswipe -useMockPlaces -demoSeedLibrary YES -demoTab library
 ```
 
-Weitere Werte für `-demoScreen`: `settings`, `location`, `map`, `detail`, `drag`.
+Weitere Werte für `-demoScreen`: `settings`, `location`, `map`, `detail`, `drag`. Intro: `-hasSeenIntro NO -demoIntroPage 2`. Sprache: `-AppleLanguages "(tr)"`.

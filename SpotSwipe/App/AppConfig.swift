@@ -32,6 +32,7 @@ nonisolated enum SettingsKey {
     static let hideSavedPlaces = "hideSavedPlaces"
     static let appearance = "appearance"
     static let recentSearches = "recentSearches"
+    static let hasSeenIntro = "hasSeenIntro"
 }
 
 nonisolated enum CardsPerRound {
@@ -46,9 +47,9 @@ nonisolated enum AppearanceMode: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .system: "System"
-        case .light: "Hell"
-        case .dark: "Dunkel"
+        case .system: String(localized: "System")
+        case .light: String(localized: "Hell")
+        case .dark: String(localized: "Dunkel")
         }
     }
 

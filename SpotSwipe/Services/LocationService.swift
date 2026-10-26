@@ -26,7 +26,13 @@ final class LocationService: NSObject, CLLocationManagerDelegate {
         authorization == .denied || authorization == .restricted
     }
 
+    /// Aktualisiert den Standort, ohne nach der Berechtigung zu fragen.
+    func refresh() {
+        if isAuthorized { manager.requestLocation() }
+    }
+
     /// Fragt beim ersten Mal nach der Berechtigung, danach wird nur der Standort aktualisiert.
+    /// Nur nach einer bewussten Aktion aufrufen (Intro, „Aktueller Standort“).
     func start() {
         switch authorization {
         case .notDetermined: manager.requestWhenInUseAuthorization()
@@ -71,10 +77,10 @@ enum Geocoder {
     static func address(for point: GeoPoint) async -> Address? {
         let location = CLLocation(latitude: point.latitude, longitude: point.longitude)
         guard let request = MKReverseGeocodingRequest(location: location) else { return nil }
-        request.preferredLocale = Formatters.locale
+        request.preferredLocale = .autoupdatingCurrent
         guard let item = try? await request.mapItems.first else { return nil }
         let city = item.addressRepresentations?.cityName
-        let title = item.address?.shortAddress ?? item.name ?? city ?? "Gewählter Ort"
+        let title = item.address?.shortAddress ?? item.name ?? city ?? String(localized: "Gewählter Ort")
         return Address(title: title, city: city)
     }
 }

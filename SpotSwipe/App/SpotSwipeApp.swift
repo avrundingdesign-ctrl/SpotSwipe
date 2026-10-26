@@ -19,6 +19,7 @@ struct RootView: View {
     @Environment(AppModel.self) private var app
     @Environment(\.modelContext) private var context
     @AppStorage(SettingsKey.appearance) private var appearance = AppearanceMode.system.rawValue
+    @AppStorage(SettingsKey.hasSeenIntro) private var hasSeenIntro = false
 
     var body: some View {
         @Bindable var app = app
@@ -32,8 +33,13 @@ struct RootView: View {
         }
         .tint(Theme.accent)
         .preferredColorScheme(AppearanceMode(rawValue: appearance)?.colorScheme)
+        .fullScreenCover(isPresented: Binding(get: { !hasSeenIntro }, set: { hasSeenIntro = !$0 })) {
+            IntroView { hasSeenIntro = true }
+                .preferredColorScheme(AppearanceMode(rawValue: appearance)?.colorScheme)
+        }
         .task {
-            app.location.start()
+            // Nach der Berechtigung fragen nur das Intro und „Aktueller Standort“.
+            app.location.refresh()
             #if DEBUG
             if DemoLaunch.seedsLibrary { DemoLaunch.seedLibrary(into: context, near: app.searchCenter ?? .cologne) }
             if DemoLaunch.tab == "library" { app.selectedTab = .library }

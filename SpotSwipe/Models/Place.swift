@@ -129,7 +129,6 @@ nonisolated struct SearchRequest: Identifiable, Hashable, Sendable {
 
 nonisolated enum SearchRadius {
     static let options: [Double] = [500, 1_000, 2_000, 5_000, 10_000, 25_000]
-    static let shortLabels = ["0,5", "1", "2", "5", "10", "25 km"]
     static let defaultIndex = 2
 
     static func value(at index: Int) -> Double {

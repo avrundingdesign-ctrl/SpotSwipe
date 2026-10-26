@@ -35,7 +35,7 @@ struct CardActions: View {
         }
     }
 
-    private func actionButton(_ title: String, systemImage: String, enabled: Bool, action: @escaping () -> Void) -> some View {
+    private func actionButton(_ title: LocalizedStringKey, systemImage: String, enabled: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             tileLabel(title, systemImage: systemImage)
         }
@@ -45,7 +45,7 @@ struct CardActions: View {
     }
 
     @ViewBuilder
-    private func tileLabel(_ title: String, systemImage: String) -> some View {
+    private func tileLabel(_ title: LocalizedStringKey, systemImage: String) -> some View {
         let label = VStack(spacing: 4) {
             Image(systemName: systemImage)
                 .font(.system(size: 18, weight: .semibold))

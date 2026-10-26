@@ -145,7 +145,7 @@ struct PlaceDetailView: View {
 
     private var metaRow: some View {
         let parts = [
-            place.userRatingCount.map { "(\($0) Bewertungen)" },
+            place.userRatingCount.map { String(localized: "(\($0) Bewertungen)") },
             place.priceLevel?.symbol,
             app.location.currentPoint.map { Formatters.distance(place.distance(from: $0)) }
         ].compactMap { $0 }
@@ -182,7 +182,7 @@ struct PlaceDetailView: View {
             if let website = place.websiteURL {
                 SectionDivider(leading: 50)
                 Button { safariURL = IdentifiableURL(url: website) } label: {
-                    infoRow(systemImage: "globe", title: "Website öffnen", chevron: true)
+                    infoRow(systemImage: "globe", title: String(localized: "Website öffnen"), chevron: true)
                 }
                 .buttonStyle(.plain)
             }
@@ -220,7 +220,7 @@ struct PlaceDetailView: View {
             ForEach(Array(place.weekdayHours.enumerated()), id: \.offset) { index, line in
                 let parts = line.split(separator: ":", maxSplits: 1).map { $0.trimmingCharacters(in: .whitespaces) }
                 HStack {
-                    Text(index == todayIndex ? "\(parts.first ?? "") · heute" : parts.first ?? line)
+                    Text(index == todayIndex ? String(localized: "\(parts.first ?? line) · heute") : parts.first ?? line)
                     Spacer()
                     Text(parts.count > 1 ? parts[1] : "")
                 }

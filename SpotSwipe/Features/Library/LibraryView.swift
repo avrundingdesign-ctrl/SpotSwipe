@@ -67,7 +67,7 @@ struct LibraryView: View {
                     } label: {
                         HStack(spacing: 6) {
                             Image(systemName: "arrow.up.arrow.down")
-                            Text(sortByDistance ? "Nächste" : "Neueste")
+                            sortByDistance ? Text("Nächste") : Text("Neueste")
                         }
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(Theme.textPrimary)
@@ -91,8 +91,11 @@ struct LibraryView: View {
     }
 
     private var statusLine: String {
-        let count = saved.count == 1 ? "1 Spot" : "\(saved.count) Spots"
-        return count + (AppConfig.isCloudSyncEnabled ? " · mit iCloud synchronisiert" : " · auf diesem iPhone")
+        let count = saved.count == 1 ? String(localized: "1 Spot") : String(localized: "\(saved.count) Spots")
+        let storage = AppConfig.isCloudSyncEnabled
+            ? String(localized: "mit iCloud synchronisiert")
+            : String(localized: "auf diesem iPhone")
+        return count + " · " + storage
     }
 
     private var searchField: some View {
@@ -119,7 +122,7 @@ struct LibraryView: View {
     private var filterChips: some View {
         ScrollView(.horizontal) {
             HStack(spacing: 8) {
-                ChipButton(title: "Alle \(saved.count)", isSelected: termFilter == nil, height: 40) {
+                ChipButton(title: String(localized: "Alle \(saved.count)"), isSelected: termFilter == nil, height: 40) {
                     termFilter = nil
                 }
                 ForEach(terms, id: \.term) { item in

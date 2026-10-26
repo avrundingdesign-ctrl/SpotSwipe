@@ -34,9 +34,9 @@ actor ProxyService {
 
         var text: String {
             switch self {
-            case .unavailable: "Fotos und Bewertungen sind gerade nicht verfügbar."
-            case .dailyLimit: "Tageslimit für Fotos erreicht – morgen geht es weiter."
-            case .budget: "Fotos pausieren gerade. Bitte später erneut versuchen."
+            case .unavailable: String(localized: "Fotos und Bewertungen sind gerade nicht verfügbar.")
+            case .dailyLimit: String(localized: "Tageslimit für Fotos erreicht – morgen geht es weiter.")
+            case .budget: String(localized: "Fotos pausieren gerade. Bitte später erneut versuchen.")
             }
         }
     }
@@ -92,8 +92,9 @@ actor ProxyService {
     /// Sendet `payload` an `path` und liefert den Antwortkörper, bei jedem Fehler `nil`.
     func send(_ path: String, _ payload: [String: any Sendable]) async -> Data? {
         var payload = payload
-        payload["lang"] = "de"
-        payload["units"] = "metric"
+        // Google liefert Öffnungszeiten in dieser Sprache ("Montag: 08:00–18:00").
+        payload["lang"] = AppLanguage.code
+        payload["units"] = Locale.current.measurementSystem == .metric ? "metric" : "imperial"
 
         // Genau einmal serialisieren: Die Signatur gilt für diese Bytes.
         guard let body = try? JSONSerialization.data(withJSONObject: payload, options: [.sortedKeys]) else {

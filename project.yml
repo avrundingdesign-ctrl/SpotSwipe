@@ -29,12 +29,15 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
         SWIFT_APPROACHABLE_CONCURRENCY: YES
+        SWIFT_EMIT_LOC_STRINGS: YES
+        LOCALIZATION_PREFERS_STRING_CATALOGS: YES
         ENABLE_PREVIEWS: YES
     info:
       path: SpotSwipe/Info.plist
       properties:
         CFBundleDisplayName: SpotSwipe
         CFBundleDevelopmentRegion: de
+        CFBundleLocalizations: [de, en, es, fr, it, tr]
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         SpotSwipeCloudKitEnabled: $(SPOTSWIPE_CLOUDKIT)
@@ -68,5 +71,8 @@ schemes:
       config: Debug
     test:
       config: Debug
+      # Die Tests prüfen deutsche Texte; unabhängig von der Simulator-Sprache.
+      language: de
+      region: DE
       targets:
         - SpotSwipeTests

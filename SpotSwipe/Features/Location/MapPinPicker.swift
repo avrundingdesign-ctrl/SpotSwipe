@@ -88,16 +88,16 @@ struct MapPinPicker: View {
                     Text("Hier wird gesucht")
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(Theme.textSecondary)
-                    Text(address?.title ?? "Ort wird ermittelt …")
+                    Text(address?.title ?? String(localized: "Ort wird ermittelt …"))
                         .font(.system(size: 22, weight: .heavy))
                         .lineLimit(1)
                         .redacted(reason: address == nil ? .placeholder : [])
-                    Text([address?.city, "Umkreis \(Formatters.radius(radius))"].compactMap { $0 }.joined(separator: " · "))
+                    Text([address?.city, String(localized: "Umkreis \(Formatters.radius(radius))")].compactMap { $0 }.joined(separator: " · "))
                         .font(.system(size: 15))
                         .foregroundStyle(Theme.textSecondary)
                 }
                 Button("Hier suchen") {
-                    onConfirm(SearchLocation(name: address?.title ?? "Gewählter Ort", subtitle: address?.city, point: center))
+                    onConfirm(SearchLocation(name: address?.title ?? String(localized: "Gewählter Ort"), subtitle: address?.city, point: center))
                 }
                 .buttonStyle(PrimaryButtonStyle(height: 56))
             }

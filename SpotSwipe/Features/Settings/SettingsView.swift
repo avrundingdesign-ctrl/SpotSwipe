@@ -9,8 +9,16 @@ struct SettingsView: View {
     @AppStorage(SettingsKey.onlyOpenNow) private var onlyOpenNow = true
     @AppStorage(SettingsKey.hideSavedPlaces) private var hideSavedPlaces = true
     @AppStorage(SettingsKey.appearance) private var appearance = AppearanceMode.system.rawValue
+    @AppStorage(SettingsKey.hasSeenIntro) private var hasSeenIntro = true
 
+    @Environment(\.openURL) private var openURL
     @State private var confirmsClearing = false
+
+    /// Name der aktuellen App-Sprache in dieser Sprache ("Deutsch", "English" …).
+    private var languageName: String {
+        let code = AppLanguage.code
+        return Locale(identifier: code).localizedString(forLanguageCode: code)?.capitalized(with: Locale(identifier: code)) ?? code
+    }
 
     var body: some View {
         ScrollView {
@@ -19,7 +27,7 @@ struct SettingsView: View {
                 SectionCard {
                     row(title: "Karten pro Runde", subtitle: "Höchstens so viele Orte pro Suche") {
                         Picker("Karten pro Runde", selection: $cardsPerRound) {
-                            ForEach(CardsPerRound.options, id: \.self) { Text("\($0)").tag($0) }
+                            ForEach(CardsPerRound.options, id: \.self) { Text(verbatim: "\($0)").tag($0) }
                         }
                         .pickerStyle(.segmented)
                         .frame(width: 112)
@@ -49,6 +57,26 @@ struct SettingsView: View {
                 }
                 .pickerStyle(.segmented)
                 .controlSize(.large)
+
+                SectionCard {
+                    // Die App-Sprache stellt iOS pro App ein (Einstellungen › SpotSwipe › Sprache).
+                    Button {
+                        if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+                    } label: {
+                        row(title: "Sprache") {
+                            HStack(spacing: 6) {
+                                Text(verbatim: languageName)
+                                    .foregroundStyle(Theme.textSecondary)
+                                Image(systemName: "arrow.up.forward.app")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(Theme.textSecondary)
+                            }
+                            .font(.system(size: 16))
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.top, 12)
 
                 sectionTitle("Bibliothek")
                 SectionCard {
@@ -90,6 +118,17 @@ struct SettingsView: View {
                     }
                     .buttonStyle(.plain)
                     SectionDivider()
+                    Button {
+                        hasSeenIntro = false
+                    } label: {
+                        row(title: "Intro noch einmal ansehen") {
+                            Image(systemName: "play.circle")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(Theme.textSecondary)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    SectionDivider()
                     row(title: "Version") {
                         Text(AppConfig.versionString)
                             .font(.system(size: 16))
@@ -111,12 +150,17 @@ struct SettingsView: View {
                 try? context.save()
             }
         } message: {
-            Text(AppConfig.isCloudSyncEnabled ? "Das gilt auch für deine anderen Geräte." : "Das lässt sich nicht rückgängig machen.")
+            if AppConfig.isCloudSyncEnabled {
+                Text("Das gilt auch für deine anderen Geräte.")
+            } else {
+                Text("Das lässt sich nicht rückgängig machen.")
+            }
         }
     }
 
-    private func sectionTitle(_ title: String) -> some View {
-        Text(title.uppercased())
+    private func sectionTitle(_ title: LocalizedStringKey) -> some View {
+        Text(title)
+            .textCase(.uppercase)
             .font(.system(size: 13, weight: .bold))
             .tracking(0.8)
             .foregroundStyle(Theme.textSecondary)
@@ -126,7 +170,7 @@ struct SettingsView: View {
             .accessibilityAddTraits(.isHeader)
     }
 
-    private func row<Trailing: View>(title: String, subtitle: String? = nil, @ViewBuilder trailing: () -> Trailing) -> some View {
+    private func row<Trailing: View>(title: LocalizedStringKey, subtitle: LocalizedStringKey? = nil, @ViewBuilder trailing: () -> Trailing) -> some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
@@ -151,9 +195,10 @@ struct SourcesView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Orte, Bewertungen, Öffnungszeiten und Fotos stammen von Google Maps. Die Fotos gehören den jeweils genannten Urheberinnen und Urhebern.")
-                Text("Karten, Adresssuche und Routen: Apple Maps.")
-                Text("SpotSwipe speichert gemerkte Orte auf deinem Gerät und – wenn eingeschaltet – in deiner privaten iCloud. Es gibt keinen eigenen Server und kein Tracking.")
+                Text("Orte, Adressen, Karten und Routen: Apple Karten.")
+                Text("Bewertungen, Öffnungszeiten und Fotos: Google Maps. Die Fotos gehören den jeweils genannten Urheberinnen und Urhebern.")
+                Text("Für Fotos und Bewertungen fragt SpotSwipe über einen eigenen Server bei Google an. Dabei werden nur Name und Lage des Orts übertragen, nicht dein Standort.")
+                Text("Gemerkte Orte speichert SpotSwipe auf deinem Gerät und – wenn eingeschaltet – in deiner privaten iCloud. Es gibt kein Tracking und keine Werbung.")
             }
             .font(.system(size: 16))
             .foregroundStyle(Theme.textPrimary)

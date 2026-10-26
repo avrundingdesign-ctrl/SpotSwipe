@@ -65,7 +65,7 @@ struct LocationPanel: View {
                         icon: Image(systemName: "location.fill"),
                         iconBackground: Theme.accent,
                         iconColor: .white,
-                        title: "Aktueller Standort",
+                        title: String(localized: "Aktueller Standort"),
                         subtitle: currentLocationSubtitle
                     ) {
                         if app.selectedLocation == nil {
@@ -82,8 +82,8 @@ struct LocationPanel: View {
                         icon: Image(systemName: "map"),
                         iconBackground: Theme.background,
                         iconColor: Theme.textPrimary,
-                        title: "Auf Karte wählen",
-                        subtitle: "Nadel setzen, wo du suchen willst"
+                        title: String(localized: "Auf Karte wählen"),
+                        subtitle: String(localized: "Nadel setzen, wo du suchen willst")
                     ) {
                         Image(systemName: "chevron.right")
                             .font(.system(size: 15, weight: .bold))
@@ -106,8 +106,8 @@ struct LocationPanel: View {
     }
 
     private var currentLocationSubtitle: String {
-        if app.location.isDenied { return "Zugriff in den iOS-Einstellungen erlauben" }
-        return app.location.currentPlaceName ?? "Wird ermittelt …"
+        if app.location.isDenied { return String(localized: "Zugriff in den iOS-Einstellungen erlauben") }
+        return app.location.currentPlaceName ?? String(localized: "Wird ermittelt …")
     }
 
     private var searchField: some View {

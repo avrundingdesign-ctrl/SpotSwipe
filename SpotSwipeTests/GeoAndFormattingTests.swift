@@ -35,31 +35,41 @@ struct GeoMathTests {
 }
 
 struct FormattersTests {
+    private let de = Locale(identifier: "de_DE")
+    private let en = Locale(identifier: "en_US")
+
     @Test func distances() {
-        #expect(Formatters.distance(648) == "650 m")
-        #expect(Formatters.distance(3) == "10 m")
-        #expect(Formatters.distance(1_234) == "1,2 km")
-        #expect(Formatters.distance(12_400) == "12 km")
+        #expect(Formatters.distance(648, locale: de) == "650 m")
+        #expect(Formatters.distance(3, locale: de) == "10 m")
+        #expect(Formatters.distance(1_234, locale: de) == "1,2 km")
+        #expect(Formatters.distance(1_234, locale: en) == "1.2 km")
+        #expect(Formatters.distance(12_400, locale: de) == "12 km")
     }
 
     @Test func radii() {
-        #expect(Formatters.radius(500) == "500 m")
-        #expect(Formatters.radius(2_000) == "2 km")
-        #expect(Formatters.radius(25_000) == "25 km")
+        #expect(Formatters.radius(500, locale: de) == "500 m")
+        #expect(Formatters.radius(2_000, locale: de) == "2 km")
+        #expect(Formatters.radius(25_000, locale: de) == "25 km")
+        #expect(Formatters.radiusTick(500, isLast: false, locale: de) == "0,5")
+        #expect(Formatters.radiusTick(500, isLast: false, locale: en) == "0.5")
+        #expect(Formatters.radiusTick(25_000, isLast: true, locale: de) == "25 km")
     }
 
-    @Test func ratingUsesGermanComma() {
-        #expect(Formatters.rating(4.7) == "4,7")
+    @Test func ratingFollowsLocale() {
+        #expect(Formatters.rating(4.7, locale: de) == "4,7")
+        #expect(Formatters.rating(4.7, locale: en) == "4.7")
     }
 
     @Test func openingStatus() throws {
+        let berlin = try #require(TimeZone(identifier: "Europe/Berlin"))
         var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = try #require(TimeZone(identifier: "Europe/Berlin"))
+        calendar.timeZone = berlin
         let six = try #require(calendar.date(from: DateComponents(year: 2026, month: 10, day: 26, hour: 18)))
         let halfPast = try #require(calendar.date(from: DateComponents(year: 2026, month: 10, day: 26, hour: 22, minute: 30)))
 
-        #expect(Formatters.openingStatus(isOpen: true, nextClose: six, calendar: calendar) == "Geöffnet · bis 18 Uhr")
-        #expect(Formatters.openingStatus(isOpen: true, nextClose: halfPast, calendar: calendar) == "Geöffnet · bis 22:30 Uhr")
+        #expect(Formatters.openingStatus(isOpen: true, nextClose: six, locale: de, timeZone: berlin) == "Geöffnet · bis 18:00")
+        #expect(Formatters.openingStatus(isOpen: true, nextClose: halfPast, locale: de, timeZone: berlin) == "Geöffnet · bis 22:30")
+        #expect(Formatters.openingStatus(isOpen: true, nextClose: nil) == "Geöffnet")
         #expect(Formatters.openingStatus(isOpen: false, nextClose: nil) == "Geschlossen")
         #expect(Formatters.openingStatus(isOpen: nil, nextClose: nil) == nil)
     }

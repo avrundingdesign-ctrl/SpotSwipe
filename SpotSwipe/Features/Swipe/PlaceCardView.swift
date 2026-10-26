@@ -101,12 +101,12 @@ struct PlaceCardView: View {
                     .font(.system(size: 14))
                 Text(Formatters.rating(rating))
                 if let count = place.userRatingCount {
-                    Text("(\(count))").foregroundStyle(.white.opacity(0.8)).fontWeight(.medium)
+                    Text(verbatim: "(\(count))").foregroundStyle(.white.opacity(0.8)).fontWeight(.medium)
                 }
             }
             ForEach(Array(metaParts.enumerated()), id: \.offset) { index, part in
                 if index > 0 || place.rating != nil {
-                    Text("·").foregroundStyle(.white.opacity(0.6))
+                    Text(verbatim: "·").foregroundStyle(.white.opacity(0.6))
                 }
                 Text(part)
             }
@@ -117,10 +117,10 @@ struct PlaceCardView: View {
     }
 
     private var metaParts: [String] {
-        [distance.map(Formatters.distance), place.priceLevel?.symbol].compactMap { $0 }
+        [distance.map { Formatters.distance($0) }, place.priceLevel?.symbol].compactMap { $0 }
     }
 
-    private func stamp(_ text: String, color: Color, angle: Double) -> some View {
+    private func stamp(_ text: LocalizedStringKey, color: Color, angle: Double) -> some View {
         Text(text)
             .font(.system(size: 26, weight: .black))
             .tracking(1.5)

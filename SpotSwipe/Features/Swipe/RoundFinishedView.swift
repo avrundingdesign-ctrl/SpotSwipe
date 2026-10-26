@@ -49,9 +49,9 @@ struct RoundFinishedView: View {
 
     private var message: String {
         switch liked.count {
-        case 0: "Diesmal war nichts dabei. Probier einen anderen Begriff oder einen größeren Umkreis."
-        case 1: "Du hast 1 von \(total) Spots gemerkt. Er wartet in deiner Bibliothek."
-        default: "Du hast \(liked.count) von \(total) Spots gemerkt. Sie warten in deiner Bibliothek."
+        case 0: String(localized: "Diesmal war nichts dabei. Probier einen anderen Begriff oder einen größeren Umkreis.")
+        case 1: String(localized: "Du hast 1 von \(total) Spots gemerkt. Er wartet in deiner Bibliothek.")
+        default: String(localized: "Du hast \(liked.count) von \(total) Spots gemerkt. Sie warten in deiner Bibliothek.")
         }
     }
 

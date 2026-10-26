@@ -41,7 +41,7 @@ final class AppModel {
     /// Text im Standort-Chip.
     var searchCenterName: String {
         if let name = searchCenterPlaceName { return name }
-        if location.currentPoint != nil { return "Mein Standort" }
-        return location.isAuthorized ? "Standort …" : "Standort wählen"
+        if location.currentPoint != nil { return String(localized: "Mein Standort") }
+        return location.isAuthorized ? String(localized: "Standort …") : String(localized: "Standort wählen")
     }
 }

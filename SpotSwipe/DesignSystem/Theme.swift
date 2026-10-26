@@ -34,7 +34,9 @@ enum Theme {
     }
 }
 
-extension Color {
+// `nonisolated`: SwiftUI löst dynamische Farben auch auf seinem Render-Thread auf
+// (etwa während Animationen). Ein an den MainActor gebundener Provider stürzt dort ab.
+nonisolated extension Color {
     init(hex: UInt32, opacity: Double = 1) {
         self.init(
             .sRGB,
@@ -46,13 +48,13 @@ extension Color {
     }
 
     init(light: UInt32, dark: UInt32) {
-        self.init(uiColor: UIColor { traits in
+        self.init(uiColor: UIColor { @Sendable traits in
             UIColor(hex: traits.userInterfaceStyle == .dark ? dark : light)
         })
     }
 }
 
-extension UIColor {
+nonisolated extension UIColor {
     convenience init(hex: UInt32) {
         self.init(
             red: CGFloat((hex >> 16) & 0xFF) / 255,

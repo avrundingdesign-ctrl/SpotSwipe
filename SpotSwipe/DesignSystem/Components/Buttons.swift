@@ -3,7 +3,7 @@ import SwiftUI
 /// Runde Glas-Taste (Zurück, Einstellungen, Teilen …).
 struct GlassIconButton: View {
     let systemImage: String
-    let label: String
+    let label: LocalizedStringKey
     var size: CGFloat = 44
     var tint: Color = Theme.textPrimary
     let action: () -> Void

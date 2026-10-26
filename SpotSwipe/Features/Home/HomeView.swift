@@ -24,7 +24,16 @@ struct HomeView: View {
 
     @ScaledMetric(relativeTo: .largeTitle) private var headlineSize: CGFloat = 46
 
-    private static let suggestions = ["Café", "Brunch", "Pizza", "Bar", "Park", "Sushi", "Bäckerei"]
+    /// Vorschläge in der Sprache der Oberfläche – Apple Karten sucht in jeder Sprache.
+    private static let suggestions = [
+        String(localized: "Café", comment: "Suchvorschlag"),
+        String(localized: "Brunch", comment: "Suchvorschlag"),
+        String(localized: "Pizza", comment: "Suchvorschlag"),
+        String(localized: "Bar", comment: "Suchvorschlag"),
+        String(localized: "Park", comment: "Suchvorschlag"),
+        String(localized: "Sushi", comment: "Suchvorschlag"),
+        String(localized: "Bäckerei", comment: "Suchvorschlag")
+    ]
 
     private var trimmedQuery: String {
         query.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -98,12 +107,14 @@ struct HomeView: View {
             Button("Standort wählen") { openLocationPanel() }
             Button("Abbrechen", role: .cancel) {}
         } message: {
-            Text(app.location.isDenied
-                 ? "SpotSwipe darf deinen Standort nicht verwenden. Wähle oben rechts einen Ort oder erlaube den Zugriff in den Einstellungen."
-                 : "Dein Standort ist noch nicht bekannt. Wähle oben rechts einen Ort.")
+            if app.location.isDenied {
+                Text("SpotSwipe darf deinen Standort nicht verwenden. Wähle oben rechts einen Ort oder erlaube den Zugriff in den Einstellungen.")
+            } else {
+                Text("Dein Standort ist noch nicht bekannt. Wähle oben rechts einen Ort.")
+            }
         }
         .onAppear {
-            if app.selectedLocation == nil { app.location.start() }
+            if app.selectedLocation == nil { app.location.refresh() }
             guard !didApplyDefaultRadius else { return }
             radiusIndex = defaultRadiusIndex
             didApplyDefaultRadius = true
@@ -266,7 +277,7 @@ struct HomeView: View {
         .padding(.horizontal, 20)
         .padding(.bottom, 12)
         .padding(.top, 8)
-        .accessibilityHint(trimmedQuery.isEmpty ? "Gib zuerst ein, wonach du suchst." : "")
+        .accessibilityHint(trimmedQuery.isEmpty ? Text("Gib zuerst ein, wonach du suchst.") : Text(verbatim: ""))
     }
 
     // MARK: - Aktionen

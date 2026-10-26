@@ -26,9 +26,9 @@ struct DistancePicker: View {
             .accessibilityValue(Formatters.radius(SearchRadius.value(at: index)))
 
             HStack {
-                ForEach(SearchRadius.shortLabels.indices, id: \.self) { i in
+                ForEach(SearchRadius.options.indices, id: \.self) { i in
                     if i > 0 { Spacer(minLength: 0) }
-                    Text(SearchRadius.shortLabels[i])
+                    Text(Formatters.radiusTick(SearchRadius.options[i], isLast: i == SearchRadius.options.count - 1))
                         .foregroundStyle(i == index ? Theme.textPrimary : Theme.textSecondary)
                 }
             }

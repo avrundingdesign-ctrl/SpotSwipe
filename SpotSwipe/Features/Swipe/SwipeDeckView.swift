@@ -102,7 +102,7 @@ struct SwipeDeckView: View {
                 Text(model.request.query)
                     .font(.system(size: 17, weight: .heavy))
                     .lineLimit(1)
-                Text("\(Formatters.radius(model.request.radius)) um \(model.request.centerName ?? "dich")")
+                subtitle
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(1)
@@ -114,7 +114,7 @@ struct SwipeDeckView: View {
                 .frame(minWidth: 64, minHeight: 44)
                 .padding(.horizontal, 6)
                 .glassEffect(.regular, in: Capsule())
-                .accessibilityLabel(model.phase == .swiping ? "Karte \(model.progressText.replacingOccurrences(of: " / ", with: " von "))" : "")
+                .accessibilityLabel(model.phase == .swiping ? Text("Karte \(model.position + 1) von \(model.deck.count)") : Text(verbatim: ""))
         }
         .foregroundStyle(Theme.textPrimary)
         .padding(.horizontal, 20)
@@ -279,10 +279,18 @@ struct SwipeDeckView: View {
         .padding(.bottom, 16)
     }
 
+    private var subtitle: Text {
+        let radius = Formatters.radius(model.request.radius)
+        if let name = model.request.centerName {
+            return Text("\(radius) um \(name)")
+        }
+        return Text("\(radius) um dich herum")
+    }
+
     private var emptyMessage: String {
-        var text = "Im Umkreis von \(Formatters.radius(model.request.radius)) gibt es keine Treffer für „\(model.request.query)“."
-        if model.request.onlyOpenNow { text += " Gerade sind nur geöffnete Orte eingeschaltet." }
-        if model.request.hideSaved { text += " Bereits gemerkte Orte sind ausgeblendet." }
+        var text = String(localized: "Im Umkreis von \(Formatters.radius(model.request.radius)) gibt es keine Treffer für „\(model.request.query)“.")
+        if model.request.onlyOpenNow { text += " " + String(localized: "Gerade sind nur geöffnete Orte eingeschaltet.") }
+        if model.request.hideSaved { text += " " + String(localized: "Bereits gemerkte Orte sind ausgeblendet.") }
         return text
     }
 

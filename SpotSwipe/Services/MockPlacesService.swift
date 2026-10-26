@@ -4,7 +4,7 @@ import UIKit
 /// (Launch-Argument `-useMockPlaces`). Liefert wie der echte Dienst erst die Grunddaten
 /// und Fotos, Bewertung und Öffnungsstatus getrennt über `extras(for:)`.
 final class MockPlacesService: PlacesService {
-    let attribution = "Beispieldaten"
+    let attribution = String(localized: "Beispieldaten")
 
     private static let names = [
         "Café Liebling", "Bohne & Brot", "Kaffeekontor", "Milchschaum", "Röstwerk 7",
