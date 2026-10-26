@@ -5,6 +5,8 @@ struct AIInfoSheet: View {
     var onEnable: () -> Void
     var onCancel: () -> Void
 
+    @State private var showsPrivacy = false
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -33,18 +35,30 @@ struct AIInfoSheet: View {
                     Text("Claude (Anthropic) bekommt deinen Suchwunsch und die Namen der gefundenen Orte – nicht deinen Standort. Ist Claude nicht erreichbar, übernimmt Apple Intelligence auf dem iPhone. Umstellen kannst du das in den Einstellungen.")
                 }
 
-                VStack(spacing: 10) {
-                    Button("KI-Suche einschalten", action: onEnable)
-                        .buttonStyle(.primary)
-                    Button("Lieber nicht", action: onCancel)
-                        .buttonStyle(.secondary)
-                }
-                .padding(.top, 4)
+                Button("Datenschutzerklärung lesen") { showsPrivacy = true }
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(Theme.accent)
             }
             .foregroundStyle(Theme.textPrimary)
             .padding(24)
         }
+        // Die Entscheidung muss auch in halber Höhe sichtbar sein.
+        .safeAreaInset(edge: .bottom) {
+            VStack(spacing: 10) {
+                Button("KI-Suche einschalten", action: onEnable)
+                    .buttonStyle(.primary)
+                Button("Lieber nicht", action: onCancel)
+                    .buttonStyle(.secondary)
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 12)
+            .padding(.bottom, 8)
+            .background(Theme.background)
+        }
         .background(Theme.background.ignoresSafeArea())
+        .sheet(isPresented: $showsPrivacy) {
+            NavigationStack { LegalTextView(document: .privacy) }
+        }
     }
 
     private func infoRow<Content: View>(systemImage: String, @ViewBuilder text: () -> Content) -> some View {

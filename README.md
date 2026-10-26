@@ -46,6 +46,16 @@ Anbieter (Einstellungen › KI-Suche): **Claude** über den Proxy (`/v1/spot-que
 
 Im Simulator gibt es kein App Attest (also kein Claude); Apple Intelligence meldet sich dort zwar verfügbar, lehnt aber ab (`ModelManagerError 1026`). Zum Ansehen: `-useMockPlaces -aiSearchEnabled YES` (Beispiel-KI).
 
+## Rechtliches
+
+Impressum und Datenschutzerklärung (Deutsch und Englisch, andere Sprachen bekommen Englisch) stehen in `SpotSwipe/Resources/Legal/*.md` – die einzige Quelle. Die App zeigt sie unter Einstellungen › Rechtliches; `scripts/make_legal_pages.py` erzeugt daraus die öffentlichen Seiten, die der Proxy ausliefert (`Maps_Ki/server/public/swipez-*.html`, eingebettet per `go:embed`):
+
+- https://zwischenzeit-api.cleanyourstuff.nl/swipez/datenschutz (für App Store Connect, Deutsch)
+- https://zwischenzeit-api.cleanyourstuff.nl/swipez/privacy (Englisch)
+- …/swipez/impressum und …/swipez/legal-notice
+
+Nach einer Textänderung: Skript laufen lassen, Proxy deployen. Das Privacy Manifest liegt in `SpotSwipe/Resources/PrivacyInfo.xcprivacy` und muss zu den Datenschutz-Angaben in App Store Connect passen.
+
 ## Sprachen
 
 Deutsch (Quelle), Englisch, Spanisch, Französisch, Italienisch, Türkisch – in `SpotSwipe/Resources/Localizable.xcstrings` und `InfoPlist.xcstrings`. Die Sprache folgt dem iPhone; pro App lässt sie sich unter *Einstellungen › SpotSwipe › Sprache* ändern (in der App: Einstellungen › Sprache).

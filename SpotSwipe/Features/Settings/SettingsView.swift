@@ -134,6 +134,32 @@ struct SettingsView: View {
                     .buttonStyle(.plain)
                 }
 
+                sectionTitle("Rechtliches")
+                SectionCard {
+                    NavigationLink {
+                        LegalTextView(document: .imprint)
+                    } label: {
+                        row(title: "Impressum") { chevron }
+                    }
+                    .buttonStyle(.plain)
+                    SectionDivider()
+                    NavigationLink {
+                        LegalTextView(document: .privacy)
+                    } label: {
+                        row(title: "Datenschutz") { chevron }
+                    }
+                    .buttonStyle(.plain)
+                    SectionDivider()
+                    Link(destination: URL(string: "mailto:\(AppConfig.supportEmail)")!) {
+                        row(title: "Kontakt", subtitle: LocalizedStringKey(stringLiteral: AppConfig.supportEmail)) {
+                            Image(systemName: "envelope")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundStyle(Theme.textSecondary)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+
                 sectionTitle("Über")
                 SectionCard {
                     NavigationLink {
@@ -188,6 +214,12 @@ struct SettingsView: View {
                 Text("Das lässt sich nicht rückgängig machen.")
             }
         }
+    }
+
+    private var chevron: some View {
+        Image(systemName: "chevron.right")
+            .font(.system(size: 14, weight: .bold))
+            .foregroundStyle(Theme.textSecondary)
     }
 
     private var providerNote: String {

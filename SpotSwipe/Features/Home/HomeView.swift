@@ -115,7 +115,7 @@ struct HomeView: View {
             } onCancel: {
                 showsAIInfo = false
             }
-            .presentationDetents([.medium, .large])
+            .presentationDetents([.large])
             .presentationDragIndicator(.visible)
         }
         .alert("Wo soll gesucht werden?", isPresented: $showsLocationHint) {
