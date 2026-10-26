@@ -3,8 +3,9 @@
 /// Wie in Meanwhile: Orte von Apple Karten (kostenlos, ohne Key), Bewertung,
 /// Fotos und Öffnungszeiten von Google über den eigenen Proxy.
 final class AppleMapsPlacesService: PlacesService {
-    /// Mehr als eine Handvoll Fotos klickt niemand durch, und jedes kostet eine Google-Anfrage.
-    static let maxPhotos = 5
+    /// Jedes Foto kostet bei Google 0,7 Cent; drei statt fünf sparen gut ein Fünftel je Karte.
+    /// Der Proxy kappt ohnehin bei drei (`maxCardPhotos` in `server/places.go`).
+    static let maxPhotos = 3
 
     var attribution: String {
         AttestService.isSupported
