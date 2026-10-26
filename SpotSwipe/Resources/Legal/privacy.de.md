@@ -31,6 +31,8 @@ Für die Karten lädt die App Fotos, Bewertungen, Öffnungszeiten und Preisnivea
 
 Die Fotos lädt deine App anschließend direkt von Googles Bildservern. Dabei erhält Google technisch unvermeidbar deine IP-Adresse. Die Verarbeitung durch Google erfolgt nach deren Datenschutzbestimmungen (policies.google.com/privacy); dabei können Daten in die USA übertragen werden.
 
+Exportierst du gemerkte Orte als Google-Maps-Liste, sucht unser Vermittlungsserver mit denselben Angaben (Name, Koordinaten, Stadt) die Kennung jedes Ortes bei Google; die App speichert diese Kennungen bei deinen Orten. Öffnest du die Liste danach in Google Maps oder teilst du den Link, gelten dafür die Bedingungen und Datenschutzbestimmungen von Google.
+
 ## 6. KI-Suche (freiwillig)
 
 Die KI-Suche ist ausgeschaltet, bis du sie über das ✨-Symbol oder in den Einstellungen einschaltest. Beim ersten Einschalten erklärt die App, welche Daten wohin gehen.

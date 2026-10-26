@@ -511,6 +511,41 @@
         }
       }
     },
+    "Als Google-Maps-Liste" : {
+      "comment" : "Bibliothek: Knopf und Titel für den Export der Orte nach Google Maps",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As Google Maps list"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Como lista de Google Maps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En liste Google Maps"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Come elenco di Google Maps"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Haritalar listesi olarak"
+          }
+        }
+      }
+    },
     "An" : {
       "localizations" : {
         "en" : {
@@ -3041,6 +3076,143 @@
         }
       }
     },
+    "Google ist gerade nicht erreichbar. Versuch es später noch einmal." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google can't be reached right now. Please try again later."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google no está disponible ahora mismo. Inténtalo más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google est injoignable pour le moment. Réessaie plus tard."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google non è raggiungibile al momento. Riprova più tardi."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google'a şu anda ulaşılamıyor. Daha sonra tekrar dene."
+          }
+        }
+      }
+    },
+    "Google kennt %lld davon nicht." : {
+      "comment" : "Export als Google-Maps-Liste: so viele Orte hat Google nicht gefunden",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google doesn't know %lld of them."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google no conoce %lld de ellos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google n'en connaît pas %lld."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google non ne conosce %lld."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google bunlardan %lld tanesini bilmiyor."
+          }
+        }
+      }
+    },
+    "Google kennt keinen dieser Orte." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google doesn't know any of these places."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google no conoce ninguno de estos sitios."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google ne connaît aucun de ces lieux."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google non conosce nessuno di questi posti."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google bu mekânların hiçbirini bilmiyor."
+          }
+        }
+      }
+    },
+    "Google Maps nimmt höchstens %lld Orte. Mit Suche oder Filter wählst du andere aus." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Maps takes at most %lld places. Use search or filters to pick others."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Maps admite como máximo %lld sitios. Con la búsqueda o los filtros eliges otros."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Maps accepte au plus %lld lieux. Choisis-en d'autres avec la recherche ou les filtres."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Maps accetta al massimo %lld posti. Con la ricerca o i filtri ne scegli altri."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Haritalar en fazla %lld mekân alır. Başkalarını arama veya filtreyle seçebilirsin."
+          }
+        }
+      }
+    },
     "Hafen" : {
       "comment" : "Kategorie",
       "localizations" : {
@@ -3345,6 +3517,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaydedilenlerde ara"
+          }
+        }
+      }
+    },
+    "In Google Maps kannst du die Liste speichern und mit anderen teilen." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Google Maps you can save the list and share it with others."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En Google Maps puedes guardar la lista y compartirla con otros."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans Google Maps, tu peux enregistrer la liste et la partager avec d'autres."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In Google Maps puoi salvare l'elenco e condividerlo con altri."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Haritalar'da listeyi kaydedip başkalarıyla paylaşabilirsin."
+          }
+        }
+      }
+    },
+    "In Google Maps öffnen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open in Google Maps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir en Google Maps"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir dans Google Maps"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri in Google Maps"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Google Haritalar'da aç"
           }
         }
       }
@@ -4099,6 +4339,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Şimdi değil"
+          }
+        }
+      }
+    },
+    "Link teilen" : {
+      "comment" : "Export als Google-Maps-Liste: Link zur Liste teilen",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share link"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartir enlace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager le lien"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Condividi link"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bağlantıyı paylaş"
           }
         }
       }
@@ -5914,6 +6189,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plaj"
+          }
+        }
+      }
+    },
+    "Suche die Orte bei Google …" : {
+      "comment" : "Export als Google-Maps-Liste: Place-IDs werden nachgeschlagen",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Looking up the places on Google…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando los sitios en Google…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche des lieux sur Google…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerco i posti su Google…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mekânlar Google'da aranıyor…"
           }
         }
       }

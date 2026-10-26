@@ -30,6 +30,12 @@ final class MockPlacesService: PlacesService {
 
     func consumeNotice() async -> String? { nil }
 
+    /// Erfundene IDs – Google Maps kennt sie nicht, aber der Ablauf lässt sich durchspielen.
+    func googlePlaceIDs(for places: [Place]) async -> [String?]? {
+        try? await Task.sleep(for: delay)
+        return places.map { "demo-\($0.id)" }
+    }
+
     func photoData(for photo: PlacePhoto) async throws -> Data {
         try await Task.sleep(for: .milliseconds(80))
         return Self.renderPhoto(seed: photo.url.absoluteString, width: 900)

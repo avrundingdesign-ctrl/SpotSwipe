@@ -31,6 +31,8 @@ For the cards, the app loads photos, ratings, opening hours and price level from
 
 The photos are then loaded by your app directly from Google’s image servers, which unavoidably discloses your IP address to Google. Google processes this under its privacy policy (policies.google.com/privacy), which may involve a transfer to the United States.
 
+If you export saved places as a Google Maps list, our relay server uses the same details (name, coordinates, city) to look up each place’s ID at Google; the app stores these IDs with your places. When you then open the list in Google Maps or share the link, Google’s terms and privacy policy apply.
+
 ## 6. AI search (optional)
 
 AI search is off until you turn it on with the ✨ symbol or in Settings. The first time, the app explains which data goes where.

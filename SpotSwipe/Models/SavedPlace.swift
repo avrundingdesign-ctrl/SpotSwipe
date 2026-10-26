@@ -27,6 +27,9 @@ final class SavedPlace {
     var photoAuthors: [String] = []
     var weekdayHours: [String] = []
     var aiReason: String?
+    /// Googles Place-ID, erst beim Export als Google-Maps-Liste nachgeschlagen. Google erlaubt,
+    /// sie dauerhaft zu speichern – so wird jeder Ort nur einmal gesucht.
+    var googlePlaceID: String?
     var searchTerm: String = ""
     var savedAt: Date = Date.now
     var snapshotFetchedAt: Date = Date.now

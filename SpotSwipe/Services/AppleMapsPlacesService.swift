@@ -81,6 +81,25 @@ final class AppleMapsPlacesService: PlacesService {
         }
     }
 
+    /// Höchstens `GoogleMapsList.maxPlaces` Orte in einer Anfrage – mehr nimmt Google Maps ohnehin nicht.
+    func googlePlaceIDs(for places: [Place]) async -> [String?]? {
+        guard AttestService.isSupported, !places.isEmpty else { return nil }
+        let entries: [[String: any Sendable]] = places.prefix(GoogleMapsList.maxPlaces).map { place in
+            var entry: [String: any Sendable] = [
+                "name": place.name,
+                "lat": place.location.latitude,
+                "lng": place.location.longitude
+            ]
+            if let city = place.city { entry["city"] = city }
+            return entry
+        }
+        let result = await ProxyService.shared.send("v1/place-ids", ["places": entries])
+        guard let data = result.data,
+              let reply = try? JSONDecoder().decode(ProxyPlaceIDsReply.self, from: data),
+              reply.ids.count == entries.count else { return nil }
+        return reply.ids.map { $0.isEmpty ? nil : $0 }
+    }
+
     /// Fertige Bild-URLs von Google (googleusercontent) – kosten kein Proxy-Kontingent.
     func photoData(for photo: PlacePhoto) async throws -> Data {
         let (data, response) = try await session.data(from: photo.url)
@@ -149,6 +168,11 @@ final class AppleMapsPlacesService: PlacesService {
     static func categoryName(for category: MKPointOfInterestCategory) -> String? {
         categoryNames[category]
     }
+}
+
+/// Antwort von `POST /v1/place-ids`: eine ID je Ort, leer, wenn Google ihn nicht kennt.
+nonisolated struct ProxyPlaceIDsReply: Decodable, Sendable {
+    let ids: [String]
 }
 
 /// Antwort von `POST /v1/place`.

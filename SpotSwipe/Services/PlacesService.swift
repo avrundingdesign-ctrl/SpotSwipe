@@ -22,6 +22,14 @@ protocol PlacesService: AnyObject {
     func consumeNotice() async -> String?
 
     func photoData(for photo: PlacePhoto) async throws -> Data
+
+    /// Googles Place-IDs für den Export als Google-Maps-Liste, in derselben Reihenfolge –
+    /// `nil` für Orte, die Google nicht kennt. Insgesamt `nil`, wenn Google gerade nicht erreichbar ist.
+    func googlePlaceIDs(for places: [Place]) async -> [String?]?
+}
+
+extension PlacesService {
+    func googlePlaceIDs(for places: [Place]) async -> [String?]? { nil }
 }
 
 nonisolated enum PlacesError: LocalizedError, Equatable {

@@ -10,6 +10,10 @@ struct LibraryView: View {
     @State private var searchText = ""
     @State private var termFilter: String?
     @State private var sortByDistance = false
+    /// Auswahl für den Export als Google-Maps-Liste – beim Tippen festgehalten, damit das Sheet
+    /// nicht mitspringt, wenn sich die Bibliothek darunter ändert. Als `item`, nicht als Bool plus
+    /// Liste: Mit `isPresented` bekam das Sheet beim ersten Öffnen noch die alte, leere Liste.
+    @State private var googleList: GoogleListSelection?
 
     private let columns = [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)]
 
@@ -34,12 +38,21 @@ struct LibraryView: View {
         .navigationDestination(for: SavedPlace.self) { place in
             PlaceDetailView(saved: place)
         }
+        .sheet(item: $googleList) { selection in
+            GoogleListSheet(places: selection.places)
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+        }
         #if DEBUG
         .navigationDestination(item: $demoDetail) { PlaceDetailView(saved: $0) }
         .task {
-            guard DemoLaunch.screen == "detail", DemoLaunch.tab == "library" else { return }
+            guard DemoLaunch.tab == "library" else { return }
             try? await Task.sleep(for: .milliseconds(800))
-            demoDetail = saved.first
+            switch DemoLaunch.screen {
+            case "detail": demoDetail = saved.first
+            case "googlelist": openGoogleList()
+            default: break
+            }
         }
         #endif
     }
@@ -59,6 +72,7 @@ struct LibraryView: View {
                     .accessibilityAddTraits(.isHeader)
                 Spacer()
                 if !saved.isEmpty {
+                    GlassIconButton(systemImage: "map", label: "Als Google-Maps-Liste") { openGoogleList() }
                     Menu {
                         Picker("Sortierung", selection: $sortByDistance) {
                             Text("Neueste zuerst").tag(false)
@@ -88,6 +102,12 @@ struct LibraryView: View {
         }
         .foregroundStyle(Theme.textPrimary)
         .padding(.top, 8)
+    }
+
+    private func openGoogleList() {
+        let places = visiblePlaces
+        guard !places.isEmpty else { return }
+        googleList = GoogleListSelection(places: places)
     }
 
     private var statusLine: String {
@@ -207,6 +227,11 @@ struct LibraryView: View {
         .foregroundStyle(Theme.textPrimary)
         .frame(maxWidth: .infinity)
     }
+}
+
+private struct GoogleListSelection: Identifiable {
+    let id = UUID()
+    let places: [SavedPlace]
 }
 
 private struct LibraryCard: View {
