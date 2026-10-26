@@ -117,13 +117,16 @@ struct SwipeDeckViewModelTests {
 
     // MARK: - Ergänzen über den Proxy
 
-    @Test func enrichmentAddsPhotosAndRating() async {
+    @Test func topCardArrivesWithPhotosAndTheRestFollows() async {
         let model = makeModel(cards: 5)
         await model.load()
-        #expect(model.deck.allSatisfy { $0.photos.isEmpty && $0.rating == nil })
+        #expect(model.current?.photos.isEmpty == false, "Die oberste Karte kommt schon mit Fotos")
+        #expect(model.deck.contains { $0.rating == nil }, "Der Rest folgt erst beim Wischen")
 
         await model.enrichUpcoming()
-        #expect(model.deck.allSatisfy { !$0.photos.isEmpty && $0.rating != nil })
+        #expect(model.deck.allSatisfy { $0.rating != nil })
+        // Ort Nr. 0 hat in den Beispieldaten keine Fotos – er steht jetzt hinten statt vorne.
+        #expect(model.deck.last?.id.hasPrefix("mock-0-") == true)
     }
 
     @Test func closedPlacesAreReplacedWhenOnlyOpenIsOn() async {
@@ -166,15 +169,64 @@ struct SwipeDeckViewModelTests {
         let library = FakeLibrary()
         let model = SwipeDeckViewModel(request: request(), service: MockPlacesService(delay: .milliseconds(40)), library: library)
         await model.load()
-        let first = model.current!
+        // Die beiden vorgeladenen Karten überspringen – erst die dritte hat noch keine Fotos.
+        model.decide(.skip)
+        model.decide(.skip)
+        let third = model.current!
+        #expect(third.photos.isEmpty)
 
         let enrichment = Task { await model.enrichUpcoming() }
         await Task.yield() // Anfrage für die oberste Karte läuft jetzt
         model.decide(.like) // gemerkt, bevor die Fotos da sind
-        #expect(library.saved[first.id]?.place.photos.isEmpty == true)
+        #expect(library.saved[third.id]?.place.photos.isEmpty == true)
 
         await enrichment.value
-        #expect(library.saved[first.id]?.place.photos.isEmpty == false)
+        #expect(library.saved[third.id]?.place.photos.isEmpty == false)
+    }
+
+    // MARK: - Fotos vor dem Deck
+
+    private func places(_ ids: String...) -> [Place] {
+        ids.map { Place(id: $0, name: $0.uppercased(), location: center) }
+    }
+
+    @Test func firstCardWithoutPhotosMovesToTheBack() async {
+        let stub = PhotoStubPlacesService(places: places("a", "b", "c", "d"), withoutPhotos: ["a"])
+        let model = SwipeDeckViewModel(request: request(), service: stub, library: FakeLibrary())
+        await model.load()
+        #expect(model.phase == .swiping)
+        #expect(model.deck.map(\.id) == ["b", "c", "d", "a"])
+        #expect(model.current?.photos.isEmpty == false)
+    }
+
+    @Test func orderStaysWhenGoogleHasNoPhotosAtAll() async {
+        let stub = PhotoStubPlacesService(places: places("a", "b", "c"), withoutPhotos: ["a", "b", "c"])
+        let model = SwipeDeckViewModel(request: request(), service: stub, library: FakeLibrary())
+        await model.load()
+        await model.enrichUpcoming()
+        #expect(model.phase == .swiping)
+        #expect(model.deck.map(\.id) == ["a", "b", "c"], "Ohne ein einziges Foto bleibt die Reihenfolge der Suche")
+    }
+
+    @Test func slowPhotosDoNotHoldTheDeckBack() async {
+        let stub = PhotoStubPlacesService(places: places("a", "b"), delay: .seconds(2))
+        let model = SwipeDeckViewModel(request: request(), service: stub, library: FakeLibrary(), preloadBudget: .milliseconds(100))
+        let started = ContinuousClock.now
+        await model.load()
+        #expect(ContinuousClock.now - started < .seconds(1))
+        #expect(model.phase == .swiping)
+    }
+
+    @Test func cardWithoutPhotosMovesBackWhileSwipingButDrawnCardsStay() async {
+        let stub = PhotoStubPlacesService(places: places("a", "b", "c", "d", "e", "f"), withoutPhotos: ["c", "e"])
+        let model = SwipeDeckViewModel(request: request(), service: stub, library: FakeLibrary())
+        await model.load()
+        #expect(model.deck.map(\.id) == ["a", "b", "c", "d", "e", "f"], "Vorgeladen wurden nur a und b")
+
+        model.decide(.skip) // oben liegt jetzt b, dahinter schon sichtbar c
+        await model.enrichUpcoming()
+        // c ist bereits gezeichnet und bleibt stehen; e rutscht hinter f.
+        #expect(model.deck.map(\.id) == ["a", "b", "c", "d", "f", "e"])
     }
 
     @Test func proxyNoticeIsShown() async {
@@ -184,6 +236,32 @@ struct SwipeDeckViewModelTests {
         await model.enrichUpcoming()
         #expect(model.notice == "Tageslimit erreicht")
     }
+}
+
+/// Liefert zu jedem Ort Fotos – außer zu denen in `withoutPhotos` –, auf Wunsch verzögert.
+final class PhotoStubPlacesService: PlacesService {
+    let attribution = "Test"
+    private let places: [Place]
+    private let withoutPhotos: Set<String>
+    private let delay: Duration
+
+    init(places: [Place], withoutPhotos: Set<String> = [], delay: Duration = .zero) {
+        self.places = places
+        self.withoutPhotos = withoutPhotos
+        self.delay = delay
+    }
+
+    func searchPlaces(_ query: PlaceSearchQuery) async throws -> [Place] { places }
+
+    func extras(for place: Place) async -> PlaceExtras? {
+        if delay > .zero { try? await Task.sleep(for: delay) }
+        let photos = withoutPhotos.contains(place.id) ? [] : [PlacePhoto(url: URL(string: "mock://photo/\(place.id)/0")!)]
+        return PlaceExtras(rating: 4.5, ratingCount: 12, photos: photos)
+    }
+
+    func consumeNotice() async -> String? { nil }
+
+    func photoData(for photo: PlacePhoto) async throws -> Data { Data() }
 }
 
 final class FakeLibrary: PlaceLibrary {

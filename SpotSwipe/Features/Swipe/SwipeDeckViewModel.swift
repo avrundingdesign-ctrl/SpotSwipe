@@ -17,6 +17,8 @@ final class SwipeDeckViewModel {
     /// Was beim Laden gerade passiert – bei KI-Suche dauert es länger, deshalb sichtbar.
     enum LoadingStep {
         case understanding, searching, ranking
+        /// Die Suche ist fertig, die obersten Karten bekommen noch ihre Fotos.
+        case photos
     }
 
     private(set) var request: SearchRequest
@@ -36,19 +38,29 @@ final class SwipeDeckViewModel {
     /// Nachrücker für Orte, die sich beim Ergänzen als geschlossen herausstellen.
     @ObservationIgnored private var reserve: [Place] = []
     @ObservationIgnored private var requestedExtras: Set<String> = []
+    /// Abgefragt, aber ohne Foto zurückgekommen – diese Karten rutschen nach hinten.
+    @ObservationIgnored private var withoutPhotos: Set<String> = []
     @ObservationIgnored private var history: [(place: Place, decision: Decision)] = []
     @ObservationIgnored private let service: any PlacesService
     @ObservationIgnored private let library: any PlaceLibrary
     @ObservationIgnored private let assistant: (any SearchAssistant)?
+    @ObservationIgnored private let preloadBudget: Duration
 
     /// Höchstens so viele Orte gehen zur KI – mehr bringt kaum bessere Treffer, kostet aber Zeit.
     static let maxAICandidates = 25
+    /// So viele Karten zeichnet `SwipeDeckView` gleichzeitig: die oberste und die dahinter.
+    static let drawnCards = 2
+    /// Höchstens so viele Fotoabfragen, bevor das Deck erscheint. Jede läuft einzeln über den Proxy.
+    static let maxPreloadLookups = 6
 
-    init(request: SearchRequest, service: any PlacesService, library: any PlaceLibrary, assistant: (any SearchAssistant)? = nil) {
+    /// - Parameter preloadBudget: So lange wartet das Deck höchstens auf die ersten Fotos.
+    init(request: SearchRequest, service: any PlacesService, library: any PlaceLibrary, assistant: (any SearchAssistant)? = nil,
+         preloadBudget: Duration = .seconds(8)) {
         self.request = request
         self.service = service
         self.library = library
         self.assistant = assistant
+        self.preloadBudget = preloadBudget
     }
 
     var remaining: ArraySlice<Place> { deck[min(position, deck.count)...] }
@@ -75,7 +87,7 @@ final class SwipeDeckViewModel {
                     let places = Self.ordered([], by: picks, suggested: found)
                     if !places.isEmpty {
                         aiProvider = assistant.lastProvider
-                        start(with: places)
+                        await begin(with: places)
                         return
                     }
                     // Claude kennt hier nichts Passendes: normale Suche ohne KI.
@@ -136,13 +148,30 @@ final class SwipeDeckViewModel {
                 notice = String(localized: "KI gerade nicht erreichbar – normale Suche.")
             }
 
-            start(with: candidates)
+            await begin(with: candidates)
         } catch {
             phase = .failed((error as? LocalizedError)?.errorDescription ?? "Die Suche hat nicht geklappt.")
         }
     }
 
-    /// Neue Runde: die ersten Orte als Karten, der Rest als Nachrücker.
+    /// Neue Runde: erst bekommen die obersten Karten ihre Fotos, dann erscheint das Deck.
+    ///
+    /// Vorher erschien das Deck, sobald die Suche fertig war, und die Fotos kamen erst danach –
+    /// die erste Karte stand jedes Mal zuerst ohne Bild da. Lieber ein paar Sekunden länger
+    /// „Lade Fotos …“, gedeckelt durch `preloadBudget`.
+    private func begin(with candidates: [Place]) async {
+        start(with: candidates)
+        guard !deck.isEmpty else {
+            phase = .empty
+            return
+        }
+        loadingStep = .photos
+        await waitAtMost(preloadBudget) { await self.prepareFront() }
+        // „Nur geöffnete“ kann beim Vorladen schon geschlossene Karten aussortiert haben.
+        if phase == .loading { phase = deck.isEmpty ? .empty : .swiping }
+    }
+
+    /// Rundenzustand zurücksetzen: die ersten Orte als Karten, der Rest als Nachrücker.
     private func start(with candidates: [Place]) {
         deck = Array(candidates.prefix(request.cardsPerRound))
         reserve = Array(candidates.dropFirst(request.cardsPerRound))
@@ -150,7 +179,30 @@ final class SwipeDeckViewModel {
         liked = []
         history = []
         requestedExtras = []
-        phase = deck.isEmpty ? .empty : .swiping
+        withoutPhotos = []
+    }
+
+    /// Fragt die Karten von oben ab, bis die beiden gezeichneten geprüft sind und die oberste Fotos
+    /// hat, und lädt dann deren erstes Foto. Karten ohne Foto rutschen dabei ans Ende.
+    /// Meldet der Proxy etwas (Tageslimit, nicht erreichbar), kommen ohnehin keine Fotos – dann sofort Schluss.
+    private func prepareFront() async {
+        var lookups = 0
+        while phase == .loading, lookups < Self.maxPreloadLookups {
+            deferCardsWithoutPhotos(from: 0)
+            let front = deck.prefix(Self.drawnCards)
+            if front.allSatisfy({ requestedExtras.contains($0.id) }), deck.first?.photos.isEmpty == false { break }
+            guard let next = deck.first(where: { !requestedExtras.contains($0.id) }) else { break }
+            lookups += 1
+            guard await enrich(next) else { break }
+        }
+        guard phase == .loading else { return }
+        deferCardsWithoutPhotos(from: 0)
+
+        // Die Bilder selbst kommen direkt von Google, nicht über den Proxy – alle gleichzeitig.
+        let downloads = deck.prefix(Self.drawnCards).compactMap(\.photos.first).map { photo in
+            Task { await PhotoCache.shared.image(for: photo, using: service) }
+        }
+        for download in downloads { _ = await download.value }
     }
 
     /// Ergänzt Fotos, Bewertung und Öffnungsstatus der Reihe nach, oberste Karte zuerst.
@@ -160,12 +212,51 @@ final class SwipeDeckViewModel {
             guard let index = deck.indices.first(where: { $0 >= position && !requestedExtras.contains(deck[$0].id) }) else {
                 return
             }
-            let place = deck[index]
-            requestedExtras.insert(place.id)
-            let extras = await service.extras(for: place)
-            if let message = await service.consumeNotice() { notice = message }
-            guard let extras else { continue }
-            apply(extras, to: place.id)
+            await enrich(deck[index])
+            // Die beiden gezeichneten Karten bleiben stehen, nur dahinter wird umsortiert.
+            deferCardsWithoutPhotos(from: position + Self.drawnCards)
+        }
+    }
+
+    /// Fragt Fotos, Bewertung und Öffnungsstatus eines Ortes ab und übernimmt sie.
+    /// `false`, wenn der Proxy dabei etwas gemeldet hat.
+    @discardableResult
+    private func enrich(_ place: Place) async -> Bool {
+        requestedExtras.insert(place.id)
+        let extras = await service.extras(for: place)
+        if extras?.photos.isEmpty ?? true { withoutPhotos.insert(place.id) }
+        var quiet = true
+        if let message = await service.consumeNotice() {
+            notice = message
+            quiet = false
+        }
+        if let extras { apply(extras, to: place.id) }
+        return quiet
+    }
+
+    /// Schiebt Karten, die ohne Foto zurückkamen, ab `start` ans Ende – als nächste Karte sähen sie
+    /// schlecht aus. Die Reihenfolge bleibt sonst, wie die KI sie gewählt hat, und nichts fällt weg.
+    /// Nur wenn Google überhaupt Fotos liefert: Ohne ein einziges (Simulator, Ausfall, Tageslimit)
+    /// käme nur eine sinnlos rotierte Reihenfolge heraus.
+    private func deferCardsWithoutPhotos(from start: Int) {
+        guard start < deck.count, deck.contains(where: { !$0.photos.isEmpty }) else { return }
+        let tail = deck[start...]
+        let reordered = tail.filter { !withoutPhotos.contains($0.id) } + tail.filter { withoutPhotos.contains($0.id) }
+        if reordered.map(\.id) != tail.map(\.id) {
+            deck.replaceSubrange(start..., with: reordered)
+        }
+    }
+
+    /// Wartet auf `work`, aber höchstens `limit`. Die Arbeit läuft danach weiter, nur ohne uns –
+    /// eine Proxy-Anfrage lässt sich nicht zurückholen, ihr Ergebnis landet trotzdem im Deck.
+    private func waitAtMost(_ limit: Duration, for work: @escaping @MainActor () async -> Void) async {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            let once = ResumeOnce(continuation)
+            Task { await work(); once.resume() }
+            Task {
+                try? await Task.sleep(for: limit)
+                once.resume()
+            }
         }
     }
 
@@ -330,5 +421,19 @@ final class SwipeDeckViewModel {
             guard !excluded.contains(place.id), seen.insert(place.id).inserted else { return false }
             return GeoMath.distance(from: center, to: place.location) <= radius
         }
+    }
+}
+
+/// Setzt eine Continuation genau einmal fort – wer zuerst kommt, Arbeit oder Frist.
+private final class ResumeOnce {
+    private var continuation: CheckedContinuation<Void, Never>?
+
+    init(_ continuation: CheckedContinuation<Void, Never>) {
+        self.continuation = continuation
+    }
+
+    func resume() {
+        continuation?.resume()
+        continuation = nil
     }
 }

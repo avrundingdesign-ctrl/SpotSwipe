@@ -126,7 +126,7 @@ struct SwipeDeckView: View {
     // MARK: - Kartenstapel
 
     private var deck: some View {
-        let visible = Array(model.remaining.prefix(2).enumerated())
+        let visible = Array(model.remaining.prefix(SwipeDeckViewModel.drawnCards).enumerated())
         return ZStack {
             ForEach(visible.reversed(), id: \.element.id) { index, place in
                 let isTop = index == 0
@@ -264,11 +264,13 @@ struct SwipeDeckView: View {
     }
 
     private var loadingText: Text {
+        if model.loadingStep == .photos { return Text("Lade Fotos …") }
         guard model.request.useAI else { return Text("Suche „\(model.request.query)“ in der Nähe …") }
         switch model.loadingStep {
         case .understanding: return Text("KI versteht deinen Wunsch …")
         case .searching: return Text("Suche passende Orte …")
         case .ranking: return Text("KI sortiert nach Passung …")
+        case .photos: return Text("Lade Fotos …")
         }
     }
 
@@ -333,7 +335,12 @@ struct SwipeDeckView: View {
                 .multilineTextAlignment(.center)
             Spacer()
             Button("Nochmal versuchen") {
-                Task { await model.load() }
+                // Wie im ersten Anlauf: nach dem Laden die restlichen Fotos nachziehen –
+                // sonst bekamen die Karten nach einem Fehler nie welche.
+                Task {
+                    await model.load()
+                    await model.enrichUpcoming()
+                }
             }
             .buttonStyle(.primary)
             Button("Neue Suche") { dismiss() }

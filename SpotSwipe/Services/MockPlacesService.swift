@@ -59,6 +59,7 @@ final class MockPlacesService: PlacesService {
     }
 
     /// Jeder fünfte Ort hat geschlossen, damit sich „Nur geöffnete“ testen lässt.
+    /// Ort Nr. 0 hat keine Fotos: Er muss beim Vorladen nach hinten rutschen, statt vorne zu stehen.
     static func extras(for place: Place) -> PlaceExtras {
         let index = Int(place.id.split(separator: "-").dropFirst().first ?? "0") ?? 0
         return PlaceExtras(
@@ -71,7 +72,7 @@ final class MockPlacesService: PlacesService {
                 "Montag: 08:00–18:00", "Dienstag: 08:00–18:00", "Mittwoch: 08:00–18:00",
                 "Donnerstag: 08:00–18:00", "Freitag: 08:00–18:00", "Samstag: 09:00–18:00", "Sonntag: 10:00–17:00"
             ],
-            photos: (0..<(3 + index % 3)).map {
+            photos: index == 0 ? [] : (0..<(3 + index % 3)).map {
                 PlacePhoto(url: URL(string: "mock://photo/\(place.id)/\($0)")!, authorName: "Beispiel")
             }
         )

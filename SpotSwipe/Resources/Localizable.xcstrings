@@ -3965,6 +3965,41 @@
         }
       }
     },
+    "Lade Fotos …" : {
+      "comment" : "Ladeschritt: Die Suche ist fertig, die ersten Karten bekommen ihre Fotos",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading photos…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando fotos…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chargement des photos…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carico le foto…"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflar yükleniyor…"
+          }
+        }
+      }
+    },
     "Laden" : {
       "comment" : "Kategorie",
       "localizations" : {
