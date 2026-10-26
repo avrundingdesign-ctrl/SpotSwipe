@@ -4,6 +4,9 @@ import SwiftUI
 struct RoundFinishedView: View {
     let liked: [Place]
     let total: Int
+    /// Von „Nur geöffnete Orte“ aussortiert – dann gibt es „Auch geschlossene zeigen“.
+    var closedCount = 0
+    var onShowClosed: (() -> Void)?
     var onShowLibrary: () -> Void
     var onNewSearch: () -> Void
 
@@ -27,12 +30,21 @@ struct RoundFinishedView: View {
                     .font(.system(size: 17))
                     .foregroundStyle(Theme.textSecondary)
                     .multilineTextAlignment(.center)
+                if closedCount > 0 {
+                    Text(closedMessage)
+                        .font(.system(size: 15))
+                        .foregroundStyle(Theme.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
             }
             .padding(.horizontal, 32)
             .padding(.top, 28)
             Spacer()
 
             VStack(spacing: 10) {
+                if closedCount > 0, let onShowClosed {
+                    Button("Auch geschlossene Orte zeigen", action: onShowClosed).buttonStyle(.secondary)
+                }
                 if liked.isEmpty {
                     Button("Neue Suche", action: onNewSearch).buttonStyle(.primary)
                     Button("Zur Bibliothek", action: onShowLibrary).buttonStyle(.secondary)
@@ -53,6 +65,12 @@ struct RoundFinishedView: View {
         case 1: String(localized: "Du hast 1 von \(total) Spots gemerkt. Er wartet in deiner Bibliothek.")
         default: String(localized: "Du hast \(liked.count) von \(total) Spots gemerkt. Sie warten in deiner Bibliothek.")
         }
+    }
+
+    private var closedMessage: String {
+        closedCount == 1
+            ? String(localized: "Ein Ort hatte gerade geschlossen.")
+            : String(localized: "\(closedCount) Orte hatten gerade geschlossen.")
     }
 
     /// Bis zu vier gemerkte Orte als aufgefächerte Fotos, darunter das Herz.

@@ -8,10 +8,22 @@ nonisolated struct AIQueryPlan: Hashable, Sendable {
     var criteria: String
 }
 
-/// Ein von der KI gewählter Ort (Index in der übergebenen Kandidatenliste) mit Begründung.
+/// Ein von der KI gewählter Ort mit Begründung: entweder aus der übergebenen Kandidatenliste (`index`)
+/// oder ein Ort, den die KI selbst kennt (`name`) – den sucht die App dann in Apple Karten.
 nonisolated struct AIPick: Hashable, Sendable {
-    var index: Int
+    var index: Int?
+    var name: String?
     var reason: String?
+
+    init(index: Int, reason: String?) {
+        self.index = index
+        self.reason = reason
+    }
+
+    init(suggestedName name: String, reason: String?) {
+        self.name = name
+        self.reason = reason
+    }
 }
 
 nonisolated enum AIProvider: String, CaseIterable, Identifiable, Sendable {
@@ -88,11 +100,15 @@ final class ClaudeAssistant: SearchAssistant {
     func rank(_ wish: String, plan: AIQueryPlan, candidates: [Place], limit: Int) async -> [AIPick]? {
         guard AttestService.isSupported, !candidates.isEmpty else { return nil }
         var places: [[String: String]] = []
+        var cities: [String: Int] = [:]
         for (index, place) in candidates.enumerated() {
+            if let city = place.city { cities[city, default: 0] += 1 }
             let address: String = place.shortAddress ?? place.address ?? ""
             places.append(["id": "p\(index)", "name": place.name, "category": place.category ?? "", "address": address])
         }
-        let payload: [String: any Sendable] = ["text": wish, "criteria": plan.criteria, "limit": limit, "places": places]
+        // Die Stadt der Treffer (nicht der Standort): damit Claude bekannte Orte der Gegend ergänzen kann.
+        let city = cities.max { $0.value < $1.value }?.key ?? ""
+        let payload: [String: any Sendable] = ["text": wish, "criteria": plan.criteria, "city": city, "limit": limit, "places": places]
         guard let data = await ProxyService.shared.send("v1/spot-rank", payload).data,
               let reply = try? JSONDecoder().decode(SpotRankReply.self, from: data) else { return nil }
         lastProvider = .claude
@@ -113,19 +129,27 @@ nonisolated struct SpotQueryReply: Decodable, Sendable {
 nonisolated struct SpotRankReply: Decodable, Sendable {
     nonisolated struct Pick: Decodable, Sendable {
         let id: String
+        var name: String? = nil
         let reason: String
     }
 
     let picks: [Pick]
 
-    /// "p3" → Index 3. Unbekannte oder doppelte Ids fallen heraus.
+    /// "p3" → Index 3, "new" mit Name → Vorschlag. Unbekannte oder doppelte Ids fallen heraus.
     func picks(candidateCount: Int) -> [AIPick] {
         var seen = Set<Int>()
+        var seenNames = Set<String>()
         return picks.compactMap { pick in
+            let trimmed = pick.reason.trimmingCharacters(in: .whitespacesAndNewlines)
+            let reason = trimmed.isEmpty ? nil : trimmed
+            if pick.id == "new" {
+                let name = (pick.name ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !name.isEmpty, seenNames.insert(name.lowercased()).inserted else { return nil }
+                return AIPick(suggestedName: name, reason: reason)
+            }
             guard pick.id.hasPrefix("p"), let index = Int(pick.id.dropFirst()),
                   index >= 0, index < candidateCount, seen.insert(index).inserted else { return nil }
-            let reason = pick.reason.trimmingCharacters(in: .whitespacesAndNewlines)
-            return AIPick(index: index, reason: reason.isEmpty ? nil : reason)
+            return AIPick(index: index, reason: reason)
         }
     }
 }

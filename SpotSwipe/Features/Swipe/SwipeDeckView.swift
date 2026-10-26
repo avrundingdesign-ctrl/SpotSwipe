@@ -46,6 +46,8 @@ struct SwipeDeckView: View {
                 RoundFinishedView(
                     liked: model.liked,
                     total: model.deck.count,
+                    closedCount: model.closedPlaces.count,
+                    onShowClosed: { Task { await model.retryIncludingClosed() } },
                     onShowLibrary: onShowLibrary,
                     onNewSearch: { dismiss() }
                 )

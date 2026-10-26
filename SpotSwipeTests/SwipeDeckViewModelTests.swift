@@ -138,6 +138,23 @@ struct SwipeDeckViewModelTests {
         #expect(model.deck.allSatisfy { $0.isOpenNow == true })
     }
 
+    @Test func closedPlacesCanBeShownAfterTheRound() async {
+        let model = makeModel(cards: 5, onlyOpen: true)
+        await model.load()
+        await model.enrichUpcoming()
+        let closed = model.closedPlaces
+        #expect(closed.contains { $0.id.hasPrefix("mock-3-") })
+
+        while model.current != nil { model.decide(.skip) }
+        #expect(model.phase == .finished)
+
+        await model.retryIncludingClosed()
+        #expect(model.phase == .swiping)
+        #expect(model.deck.map(\.id) == closed.map(\.id))
+        #expect(model.deck.allSatisfy { !$0.photos.isEmpty }, "Fotos sind schon da – keine neue Suche")
+        #expect(model.closedPlaces.isEmpty)
+    }
+
     @Test func closedPlacesStayWhenOnlyOpenIsOff() async {
         let model = makeModel(cards: 5, onlyOpen: false)
         await model.load()

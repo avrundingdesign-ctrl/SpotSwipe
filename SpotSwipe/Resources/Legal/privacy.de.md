@@ -35,7 +35,7 @@ Die Fotos lädt deine App anschließend direkt von Googles Bildservern. Dabei er
 
 Die KI-Suche ist ausgeschaltet, bis du sie über das ✨-Symbol oder in den Einstellungen einschaltest. Beim ersten Einschalten erklärt die App, welche Daten wohin gehen.
 
-Mit Claude (Anthropic PBC, USA): Die App sendet deinen Suchwunsch und anschließend Namen, Kategorien und Kurzadressen der gefundenen Orte sowie die Sprache deiner Oberfläche über unseren Vermittlungsserver an Anthropic. Dein Standort, dein Name und sonstige Kennungen werden nicht übertragen. Auf unserem Server werden die Inhalte dieser Anfragen nicht gespeichert; protokolliert werden nur die aufgerufene Funktion, der Antwortstatus und die Bearbeitungsdauer. Die Verarbeitung durch Anthropic erfolgt nach deren Datenschutzbestimmungen (anthropic.com/legal/privacy); dabei werden Daten in die USA übertragen.
+Mit Claude (Anthropic PBC, USA): Die App sendet deinen Suchwunsch und anschließend Namen, Kategorien und Kurzadressen der gefundenen Orte samt ihrer Stadt sowie die Sprache deiner Oberfläche über unseren Vermittlungsserver an Anthropic. Dein Standort, dein Name und sonstige Kennungen werden nicht übertragen. Auf unserem Server werden die Inhalte dieser Anfragen nicht gespeichert; protokolliert werden nur die aufgerufene Funktion, der Antwortstatus und die Bearbeitungsdauer. Die Verarbeitung durch Anthropic erfolgt nach deren Datenschutzbestimmungen (anthropic.com/legal/privacy); dabei werden Daten in die USA übertragen.
 
 Mit Apple Intelligence: Die Verarbeitung findet direkt auf deinem Gerät statt, ohne Übertragung an uns oder an Dritte.
 

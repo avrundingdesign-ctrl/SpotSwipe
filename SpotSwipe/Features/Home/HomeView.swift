@@ -8,7 +8,7 @@ struct HomeView: View {
 
     @AppStorage(SettingsKey.defaultRadiusIndex) private var defaultRadiusIndex = SearchRadius.defaultIndex
     @AppStorage(SettingsKey.cardsPerRound) private var cardsPerRound = CardsPerRound.standard
-    @AppStorage(SettingsKey.onlyOpenNow) private var onlyOpenNow = true
+    @AppStorage(SettingsKey.onlyOpenNow) private var onlyOpenNow = false
     @AppStorage(SettingsKey.hideSavedPlaces) private var hideSavedPlaces = true
     @AppStorage(SettingsKey.recentSearches) private var recentStorage = ""
     @AppStorage(SettingsKey.aiSearchEnabled) private var aiSearchEnabled = false
@@ -155,6 +155,10 @@ struct HomeView: View {
         default: break
         }
         if let term = DemoLaunch.search {
+            // Auf dem Gerät braucht der Standort einen Moment.
+            for _ in 0..<25 where app.searchCenter == nil {
+                try? await Task.sleep(for: .milliseconds(200))
+            }
             query = term
             startSearch()
         }

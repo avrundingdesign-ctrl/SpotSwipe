@@ -32,7 +32,7 @@ Der Proxy (`Maps_Ki/server`, läuft auf `zwischenzeit-api.cleanyourstuff.nl`) pr
 
 App Attest gibt es nur auf echten Geräten. **Im Simulator** zeigt die App deshalb echte Orte von Apple Karten, aber ohne Fotos und Bewertungen. Für Screens mit Fotos: Beispieldaten per `-useMockPlaces`.
 
-Beim Swipen erscheinen die Karten sofort mit den Apple-Daten; Fotos und Bewertung kommen Karte für Karte über den Proxy nach (oberste zuerst). Ist „Nur geöffnete Orte“ an, fliegen geschlossene Orte raus, bevor sie oben ankommen, und Orte aus der Reserve rücken nach.
+Beim Swipen erscheinen die Karten sofort mit den Apple-Daten; Fotos und Bewertung kommen Karte für Karte über den Proxy nach (oberste zuerst). „Nur geöffnete Orte“ ist ab Werk aus – sonst fliegen mittags z. B. alle Bars raus. Ist es an, fliegen geschlossene Orte raus, bevor sie oben ankommen, und Orte aus der Reserve rücken nach; am Ende der Runde zeigt „Auch geschlossene Orte zeigen“ die aussortierten Orte ohne neue Suche.
 
 ## KI-Suche
 
@@ -40,7 +40,7 @@ Das ✨ im Suchfeld schaltet die KI-Suche ein (beim ersten Mal mit Hinweis: daue
 
 1. **Verstehen:** Aus „ruhiges Café zum Arbeiten“ werden Suchbegriffe für Apple Karten („Café“, „Coworking Space“) plus Kriterien („ruhig, WLAN“).
 2. **Suchen:** Apple Karten mit diesen Begriffen.
-3. **Sortieren:** Die KI wählt aus bis zu 25 Treffern die passenden, in Reihenfolge, je mit einem Satz „warum“ (auf der Karte mit ✨).
+3. **Sortieren:** Die KI wählt aus bis zu 25 Treffern die passenden, in Reihenfolge, je mit einem Satz „warum“ (auf der Karte mit ✨). Claude ergänzt dabei bis zu sechs Orte aus eigenem Wissen, die in der Liste fehlen (dafür bekommt es die Stadt der Treffer); die App sucht sie per Name in Apple Karten und nimmt nur echte Treffer im Umkreis. Kennt Claude einen Ort nicht, bleibt die Begründung leer.
 
 Anbieter (Einstellungen › KI-Suche): **Claude** über den Proxy (`/v1/spot-query`, `/v1/spot-rank`, Prompts fest im Server, Key nur dort, zählt aufs Tageskontingent und Monatsbudget von Meanwhile) oder **Apple Intelligence** auf dem Gerät. Der jeweils andere ist Fallback. Klappt beides nicht, läuft die normale Suche mit Hinweis weiter. Findet Apple Karten zu einem ganzen Satz nichts, sucht die App zusätzlich nach den einzelnen Wörtern.
 

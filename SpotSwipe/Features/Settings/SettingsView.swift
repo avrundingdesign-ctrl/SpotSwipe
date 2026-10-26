@@ -6,7 +6,7 @@ struct SettingsView: View {
 
     @AppStorage(SettingsKey.cardsPerRound) private var cardsPerRound = CardsPerRound.standard
     @AppStorage(SettingsKey.defaultRadiusIndex) private var defaultRadiusIndex = SearchRadius.defaultIndex
-    @AppStorage(SettingsKey.onlyOpenNow) private var onlyOpenNow = true
+    @AppStorage(SettingsKey.onlyOpenNow) private var onlyOpenNow = false
     @AppStorage(SettingsKey.hideSavedPlaces) private var hideSavedPlaces = true
     @AppStorage(SettingsKey.appearance) private var appearance = AppearanceMode.system.rawValue
     @AppStorage(SettingsKey.hasSeenIntro) private var hasSeenIntro = true

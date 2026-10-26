@@ -1,86 +1,100 @@
 {
-  "sourceLanguage": "de",
-  "strings": {
-    "CFBundleDisplayName": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipez"
+  "sourceLanguage" : "de",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipez"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipez"
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipez"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipez"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipez"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipez"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipez"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipez"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipez"
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipez"
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipez"
           }
         }
       }
     },
-    "NSLocationWhenInUseUsageDescription": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipez nutzt deinen Standort, um Orte in deiner Nähe zu finden."
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "SpotSwipe"
+          }
+        }
+      }
+    },
+    "NSLocationWhenInUseUsageDescription" : {
+      "comment" : "Privacy - Location When In Use Usage Description",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipez nutzt deinen Standort, um Orte in deiner Nähe zu finden."
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipez uses your location to find places near you."
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipez uses your location to find places near you."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipez usa tu ubicación para encontrar sitios cerca de ti."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipez usa tu ubicación para encontrar sitios cerca de ti."
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipez utilise ta position pour trouver des lieux près de toi."
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipez utilise ta position pour trouver des lieux près de toi."
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipez usa la tua posizione per trovare posti vicino a te."
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipez usa la tua posizione per trovare posti vicino a te."
           }
         },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Swipez yakınındaki mekânları bulmak için konumunu kullanır."
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipez yakınındaki mekânları bulmak için konumunu kullanır."
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

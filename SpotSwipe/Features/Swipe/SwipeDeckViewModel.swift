@@ -30,6 +30,8 @@ final class SwipeDeckViewModel {
     private(set) var loadingStep: LoadingStep = .searching
     /// Wer die Treffer sortiert hat, falls die KI-Suche geklappt hat.
     private(set) var aiProvider: AIProvider?
+    /// Was „Nur geöffnete Orte“ in dieser Runde aussortiert hat – samt Fotos, für „Auch geschlossene zeigen“.
+    private(set) var closedPlaces: [Place] = []
 
     /// Nachrücker für Orte, die sich beim Ergänzen als geschlossen herausstellen.
     @ObservationIgnored private var reserve: [Place] = []
@@ -58,6 +60,7 @@ final class SwipeDeckViewModel {
         phase = .loading
         notice = nil
         aiProvider = nil
+        closedPlaces = []
         let ai = request.useAI ? assistant : nil
         do {
             var plan: AIQueryPlan?
@@ -98,9 +101,14 @@ final class SwipeDeckViewModel {
                 loadingStep = .ranking
                 let pool = Array(candidates.prefix(Self.maxAICandidates))
                 let fallbackPlan = AIQueryPlan(queries: [request.query], criteria: "")
-                if let picks = await ai.rank(request.query, plan: plan ?? fallbackPlan, candidates: pool, limit: request.cardsPerRound + 5),
+                // Mit „Nur geöffnete Orte“ fliegen geschlossene Karten raus – dann alle passenden
+                // Orte holen, damit genug nachrücken (abends sind z. B. viele Cafés schon zu).
+                let limit = request.onlyOpenNow ? pool.count : request.cardsPerRound + 5
+                if let picks = await ai.rank(request.query, plan: plan ?? fallbackPlan, candidates: pool, limit: limit),
                    !picks.isEmpty {
-                    candidates = Self.ordered(pool, by: picks, fillingUpTo: request.cardsPerRound)
+                    let suggested = await resolveSuggestions(in: picks, excluding: Set(pool.map(\.id)))
+                    debugLog("Vorschläge: \(picks.compactMap(\.name)) → gefunden: \(suggested.values.map(\.name))")
+                    candidates = Self.ordered(pool, by: picks, suggested: suggested, fillingUpTo: request.cardsPerRound)
                     aiProvider = ai.lastProvider
                 } else {
                     notice = String(localized: "KI gerade nicht erreichbar – normale Suche.")
@@ -137,11 +145,22 @@ final class SwipeDeckViewModel {
         }
     }
 
-    /// Neue Suche mit „auch geschlossene Orte“, wenn die Runde leer blieb.
+    /// „Auch geschlossene Orte zeigen“: die aussortierten Orte als eigene Runde, ohne neue Suche.
+    /// Blieb die Suche von Anfang an leer, wird ohne den Filter neu gesucht.
     func retryIncludingClosed() async {
         request.onlyOpenNow = false
-        await load()
-        await enrichUpcoming()
+        guard !closedPlaces.isEmpty else {
+            await load()
+            await enrichUpcoming()
+            return
+        }
+        deck = Array(closedPlaces.prefix(request.cardsPerRound))
+        closedPlaces = []
+        reserve = []
+        position = 0
+        liked = []
+        history = []
+        phase = .swiping
     }
 
     func decide(_ decision: Decision) {
@@ -171,6 +190,7 @@ final class SwipeDeckViewModel {
 
         if request.onlyOpenNow, merged.isOpenNow == false, index >= position {
             deck.remove(at: index)
+            closedPlaces.append(merged)
             if !reserve.isEmpty { deck.append(reserve.removeFirst()) }
             if position >= deck.count {
                 phase = history.isEmpty ? .empty : .finished
@@ -201,18 +221,67 @@ final class SwipeDeckViewModel {
         return Array(words.filter { $0.count >= 3 && seen.insert($0.lowercased()).inserted }.prefix(4))
     }
 
-    /// Ordnet die Kandidaten wie von der KI gewählt und hängt die Begründungen an.
+    /// Höchstens so viele Vorschläge der KI werden in Apple Karten nachgeschlagen.
+    static let maxSuggestions = 6
+
+    /// Sucht die Orte, die die KI selbst vorgeschlagen hat, in Apple Karten – nur echte Treffer
+    /// mit passendem Namen im Umkreis zählen, so fallen erfundene oder zu weit entfernte Orte heraus.
+    private func resolveSuggestions(in picks: [AIPick], excluding known: Set<String>) async -> [String: Place] {
+        let names = Array(picks.compactMap(\.name).prefix(Self.maxSuggestions))
+        var found: [String: Place] = [:]
+        var taken = known
+        for name in names {
+            let query = PlaceSearchQuery(text: name, center: request.center, radius: request.radius)
+            guard let results = try? await service.searchPlaces(query) else { continue }
+            let match = Self.candidates(from: results, center: request.center, radius: request.radius,
+                                        excluding: request.hideSaved ? library.savedPlaceIDs() : [])
+                .first { Self.namesMatch($0.name, name) && !taken.contains($0.id) }
+            if let match {
+                found[name] = match
+                taken.insert(match.id)
+            }
+        }
+        return found
+    }
+
+    /// „Le Lion“ passt zu „Le Lion · Bar de Paris“, „Boilerman Bar“ zu „Boilerman“ – aber nicht
+    /// jedes Café zu „Café Koppel“: verglichen werden die Wörter ohne Allerweltswörter.
+    nonisolated static func namesMatch(_ found: String, _ wanted: String) -> Bool {
+        let generic: Set<String> = ["cafe", "café", "bar", "restaurant", "the", "das", "der", "die", "le", "la",
+                                    "coffee", "kaffee", "bistro", "pizzeria", "hamburg", "und", "and", "&"]
+        func words(_ text: String) -> Set<String> {
+            let folded = text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+            return Set(folded.split(whereSeparator: { !$0.isLetter && !$0.isNumber }).map(String.init))
+        }
+        let a = words(found), b = words(wanted)
+        let significant = b.subtracting(generic)
+        if significant.isEmpty { return a == b }
+        return significant.isSubset(of: a) || a.subtracting(generic).isSubset(of: significant) && !a.subtracting(generic).isEmpty
+    }
+
+    /// Ordnet die Kandidaten wie von der KI gewählt und hängt die Begründungen an. Vorschläge der KI
+    /// stehen an ihrer Stelle, sofern Apple Karten sie gefunden hat (`suggested`, nach Name).
     /// Wählt die KI weniger Orte als eine Runde braucht, rücken die übrigen Treffer
     /// (ohne Begründung, in der Reihenfolge von Apple Karten) dahinter auf.
-    nonisolated static func ordered(_ candidates: [Place], by picks: [AIPick], fillingUpTo minimum: Int = 0) -> [Place] {
+    nonisolated static func ordered(_ candidates: [Place], by picks: [AIPick], suggested: [String: Place] = [:],
+                                    fillingUpTo minimum: Int = 0) -> [Place] {
         var chosen = Set<Int>()
+        var chosenIDs = Set<String>()
         var result: [Place] = picks.compactMap { pick in
-            guard candidates.indices.contains(pick.index), chosen.insert(pick.index).inserted else { return nil }
-            var place = candidates[pick.index]
+            var place: Place
+            if let index = pick.index {
+                guard candidates.indices.contains(index), chosen.insert(index).inserted else { return nil }
+                place = candidates[index]
+            } else if let name = pick.name, let match = suggested[name] {
+                place = match
+            } else {
+                return nil
+            }
+            guard chosenIDs.insert(place.id).inserted else { return nil }
             place.aiReason = pick.reason
             return place
         }
-        for index in candidates.indices where result.count < minimum && !chosen.contains(index) {
+        for index in candidates.indices where result.count < minimum && !chosen.contains(index) && !chosenIDs.contains(candidates[index].id) {
             result.append(candidates[index])
         }
         return result

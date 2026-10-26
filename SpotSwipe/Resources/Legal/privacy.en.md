@@ -35,7 +35,7 @@ The photos are then loaded by your app directly from Google’s image servers, w
 
 AI search is off until you turn it on with the ✨ symbol or in Settings. The first time, the app explains which data goes where.
 
-With Claude (Anthropic PBC, USA): the app sends your search request and then the names, categories and short addresses of the places found, plus your interface language, through our relay server to Anthropic. Your location, your name and other identifiers are not transmitted. Our server does not store the content of these requests; it only logs the endpoint, the response status and the processing time. Anthropic processes the data under its privacy policy (anthropic.com/legal/privacy), which involves a transfer to the United States.
+With Claude (Anthropic PBC, USA): the app sends your search request and then the names, categories and short addresses of the places found and their city, plus your interface language, through our relay server to Anthropic. Your location, your name and other identifiers are not transmitted. Our server does not store the content of these requests; it only logs the endpoint, the response status and the processing time. Anthropic processes the data under its privacy policy (anthropic.com/legal/privacy), which involves a transfer to the United States.
 
 With Apple Intelligence: processing happens directly on your device, without any transfer to us or third parties.
 

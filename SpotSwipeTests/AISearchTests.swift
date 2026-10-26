@@ -77,6 +77,38 @@ struct AISearchTests {
         #expect(picks == [AIPick(index: 1, reason: "Gut"), AIPick(index: 0, reason: nil)])
     }
 
+    @Test func suggestionsAreLookedUpAndPlacedWhereTheAIRankedThem() async {
+        let lion = Place(id: "lion", name: "Le Lion · Bar de Paris", category: "Bar", location: center)
+        let farAway = Place(id: "far", name: "Boilerman Bar", location: GeoPoint(latitude: center.latitude + 0.2, longitude: center.longitude))
+        let service = QueryPlacesService(byQuery: ["Bar": places, "Le Lion": [lion], "Boilerman Bar": [farAway]])
+        let assistant = StubAssistant(plan: AIQueryPlan(queries: ["Bar"], criteria: ""), picks: [
+            AIPick(suggestedName: "Le Lion", reason: "Bekannt für Gin Basil Smash."),
+            AIPick(index: 1, reason: nil),
+            AIPick(suggestedName: "Boilerman Bar", reason: "zu weit weg"),
+            AIPick(suggestedName: "Gibt es nicht", reason: "erfunden")
+        ])
+        let model = SwipeDeckViewModel(request: request(useAI: true), service: service, library: FakeLibrary(), assistant: assistant)
+        await model.load()
+
+        #expect(service.queries == ["Bar", "Le Lion", "Boilerman Bar", "Gibt es nicht"])
+        #expect(model.deck.map(\.id) == ["lion", "b", "a", "c"], "Vorschlag an seiner Stelle, Erfundenes und Entferntes raus")
+        #expect(model.deck.first?.aiReason == "Bekannt für Gin Basil Smash.")
+    }
+
+    @Test func rankReplyReadsSuggestions() throws {
+        let json = #"{"picks":[{"id":"new","name":"Le Lion","reason":"Klassiker"},{"id":"new","name":"","reason":"x"},{"id":"new","name":"le lion","reason":"doppelt"},{"id":"p0","reason":"Gut"}]}"#
+        let picks = try JSONDecoder().decode(SpotRankReply.self, from: Data(json.utf8)).picks(candidateCount: 1)
+        #expect(picks == [AIPick(suggestedName: "Le Lion", reason: "Klassiker"), AIPick(index: 0, reason: "Gut")])
+    }
+
+    @Test func suggestedNamesMatchOnlyTheRightPlace() {
+        #expect(SwipeDeckViewModel.namesMatch("Le Lion · Bar de Paris", "Le Lion"))
+        #expect(SwipeDeckViewModel.namesMatch("Boilerman", "Boilerman Bar"))
+        #expect(SwipeDeckViewModel.namesMatch("Café Koppel", "Cafe Koppel"))
+        #expect(!SwipeDeckViewModel.namesMatch("Café Panda", "Café Koppel"))
+        #expect(!SwipeDeckViewModel.namesMatch("Bar 12", "Bar"), "Nur Allerweltswörter zählen nicht")
+    }
+
     @Test func fallbackTermsSplitSentencesIntoWords() {
         #expect(SwipeDeckViewModel.fallbackTerms(for: "ruhiges Café zum Arbeiten") == ["ruhiges", "Café", "zum", "Arbeiten"])
         #expect(SwipeDeckViewModel.fallbackTerms(for: "Bar am Rhein, Bar") == ["Bar", "Rhein"])
@@ -111,6 +143,26 @@ final class RecordingPlacesService: PlacesService {
     func searchPlaces(_ query: PlaceSearchQuery) async throws -> [Place] {
         queries.append(query.text)
         return places
+    }
+
+    func extras(for place: Place) async -> PlaceExtras? { nil }
+    func consumeNotice() async -> String? { nil }
+    func photoData(for photo: PlacePhoto) async throws -> Data { Data() }
+}
+
+/// Liefert je Suchbegriff eigene Treffer (für Vorschläge der KI, die nach Namen gesucht werden).
+final class QueryPlacesService: PlacesService {
+    let attribution = "Test"
+    private let byQuery: [String: [Place]]
+    private(set) var queries: [String] = []
+
+    init(byQuery: [String: [Place]]) {
+        self.byQuery = byQuery
+    }
+
+    func searchPlaces(_ query: PlaceSearchQuery) async throws -> [Place] {
+        queries.append(query.text)
+        return byQuery[query.text] ?? []
     }
 
     func extras(for place: Place) async -> PlaceExtras? { nil }
