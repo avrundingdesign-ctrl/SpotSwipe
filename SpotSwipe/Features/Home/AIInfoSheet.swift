@@ -32,7 +32,7 @@ struct AIInfoSheet: View {
                     Text("Die Suche dauert dadurch etwas länger, die Treffer passen aber besser.")
                 }
                 infoRow(systemImage: "lock") {
-                    Text("Claude (Anthropic) bekommt deinen Suchwunsch und die Namen der gefundenen Orte – nicht deinen Standort. Ist Claude nicht erreichbar, übernimmt Apple Intelligence auf dem iPhone. Umstellen kannst du das in den Einstellungen.")
+                    Text("Claude (Anthropic) bekommt deinen Suchwunsch und die ungefähre Gegend (Straße ohne Hausnummer und Stadt) – nicht deinen genauen Standort. Ist Claude nicht erreichbar, übernimmt Apple Intelligence auf dem iPhone. Umstellen kannst du das in den Einstellungen.")
                 }
 
                 Button("Datenschutzerklärung lesen") { showsPrivacy = true }

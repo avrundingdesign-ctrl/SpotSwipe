@@ -74,7 +74,7 @@ struct SettingsView: View {
                     }
                     .padding(16)
                 }
-                Text("Mit KI dauert die Suche etwas länger, die Treffer passen aber besser. Bei Claude gehen dein Suchwunsch und die Namen der gefundenen Orte über unseren Server an Anthropic, nicht dein Standort. Apple Intelligence rechnet direkt auf dem iPhone.")
+                Text("Mit KI dauert die Suche etwas länger, die Treffer passen aber besser. Bei Claude gehen dein Suchwunsch und die ungefähre Gegend (Straße ohne Hausnummer und Stadt) über unseren Server an Anthropic, nicht dein genauer Standort. Apple Intelligence rechnet direkt auf dem iPhone.")
                     .font(.system(size: 13))
                     .foregroundStyle(Theme.textSecondary)
                     .padding(.horizontal, 4)

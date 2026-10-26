@@ -83,4 +83,27 @@ enum Geocoder {
         let title = item.address?.shortAddress ?? item.name ?? city ?? String(localized: "Gewählter Ort")
         return Address(title: title, city: city)
     }
+
+    /// Ungefähre Gegend für die KI-Suche mit Claude: Straße ohne Hausnummer, Postleitzahl und Stadt
+    /// („Goetheallee, 22765 Hamburg, Deutschland“) – damit Claude das Viertel kennt, ohne den genauen Standort.
+    static func area(for point: GeoPoint) async -> String? {
+        let location = CLLocation(latitude: point.latitude, longitude: point.longitude)
+        guard let request = MKReverseGeocodingRequest(location: location),
+              let item = try? await request.mapItems.first,
+              let full = item.address?.fullAddress else { return nil }
+        return areaDescription(fromFullAddress: full)
+    }
+
+    /// Entfernt Hausnummern, behält Postleitzahl und Ort: „Marienplatz 7–11, 80331 München“ → „Marienplatz, 80331 München“.
+    nonisolated static func areaDescription(fromFullAddress address: String) -> String? {
+        var parts: [String] = []
+        for component in address.split(whereSeparator: { $0 == "," || $0 == "\n" }) {
+            let words = component.split(separator: " ").map(String.init)
+            let isPostalLine = words.contains { $0.count >= 4 && $0.allSatisfy(\.isNumber) } && words.contains { $0.contains(where: \.isLetter) }
+            let kept = isPostalLine ? words : words.filter { !$0.contains(where: \.isNumber) }
+            let part = kept.joined(separator: " ").trimmingCharacters(in: .whitespaces)
+            if !part.isEmpty, parts.last != part { parts.append(part) }
+        }
+        return parts.isEmpty ? nil : parts.joined(separator: ", ")
+    }
 }

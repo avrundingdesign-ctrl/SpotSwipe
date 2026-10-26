@@ -36,13 +36,17 @@ Beim Swipen erscheinen die Karten sofort mit den Apple-Daten; Fotos und Bewertun
 
 ## KI-Suche
 
-Das ✨ im Suchfeld schaltet die KI-Suche ein (beim ersten Mal mit Hinweis: dauert länger, passt besser). Ablauf:
+Das ✨ im Suchfeld schaltet die KI-Suche ein (beim ersten Mal mit Hinweis: dauert länger, passt besser).
+
+**Mit Claude (Normalfall):** Claude nennt die Orte selbst, aus eigenem Wissen – Apple Karten weiß nicht, welches Café ruhig ist. Die App schickt dafür Wunsch, Umkreis und die ungefähre Gegend (Straße ohne Hausnummer, Postleitzahl, Stadt; `Geocoder.area`) an `/v1/spot-recommend`, bekommt bis zu 20 Namen mit Begründung und sucht jeden Namen gleichzeitig in Apple Karten. Nur echte Treffer im Umkreis mit passendem Namen bleiben, in Claudes Reihenfolge; aufgefüllt wird nicht. Erfahrungsgemäß findet sich etwa jeder zweite Name. Kennt Claude dort nichts, läuft die normale Suche mit Hinweis. Die Begründungen (✨) stammen aus Claudes Wissen und können falsch sein.
+
+**Ausweichweg (Apple Intelligence, oder Claude nicht erreichbar):**
 
 1. **Verstehen:** Aus „ruhiges Café zum Arbeiten“ werden Suchbegriffe für Apple Karten („Café“, „Coworking Space“) plus Kriterien („ruhig, WLAN“).
 2. **Suchen:** Apple Karten mit diesen Begriffen.
-3. **Sortieren:** Die KI wählt aus bis zu 25 Treffern die passenden, in Reihenfolge, je mit einem Satz „warum“ (auf der Karte mit ✨). Claude ergänzt dabei bis zu sechs Orte aus eigenem Wissen, die in der Liste fehlen (dafür bekommt es die Stadt der Treffer); die App sucht sie per Name in Apple Karten und nimmt nur echte Treffer im Umkreis. Kennt Claude einen Ort nicht, bleibt die Begründung leer.
+3. **Sortieren:** Die KI wählt aus bis zu 25 Treffern die passenden, in Reihenfolge, je mit einem Satz „warum“.
 
-Anbieter (Einstellungen › KI-Suche): **Claude** über den Proxy (`/v1/spot-query`, `/v1/spot-rank`, Prompts fest im Server, Key nur dort, zählt aufs Tageskontingent und Monatsbudget von Meanwhile) oder **Apple Intelligence** auf dem Gerät. Der jeweils andere ist Fallback. Klappt beides nicht, läuft die normale Suche mit Hinweis weiter. Findet Apple Karten zu einem ganzen Satz nichts, sucht die App zusätzlich nach den einzelnen Wörtern.
+Anbieter (Einstellungen › KI-Suche): **Claude** über den Proxy (Prompts fest im Server, Key nur dort, zählt aufs Tageskontingent und Monatsbudget von Meanwhile) oder **Apple Intelligence** auf dem Gerät. Der jeweils andere ist Fallback. Klappt beides nicht, läuft die normale Suche mit Hinweis weiter. Findet Apple Karten zu einem ganzen Satz nichts, sucht die App zusätzlich nach den einzelnen Wörtern.
 
 Im Simulator gibt es kein App Attest (also kein Claude); Apple Intelligence meldet sich dort zwar verfügbar, lehnt aber ab (`ModelManagerError 1026`). Zum Ansehen: `-useMockPlaces -aiSearchEnabled YES` (Beispiel-KI).
 

@@ -85,3 +85,12 @@ struct FormattersTests {
         #expect(RecentSearches.decode(stored).count == RecentSearches.limit)
     }
 }
+
+struct AreaDescriptionTests {
+    @Test func houseNumbersAreRemovedPostalCodeStays() {
+        #expect(Geocoder.areaDescription(fromFullAddress: "Goetheallee 6, 22765 Hamburg, Deutschland") == "Goetheallee, 22765 Hamburg, Deutschland")
+        #expect(Geocoder.areaDescription(fromFullAddress: "Marienplatz, Marienplatz 7–11, 80331 München, Deutschland") == "Marienplatz, 80331 München, Deutschland")
+        #expect(Geocoder.areaDescription(fromFullAddress: "1 Infinite Loop, Cupertino, CA 95014, United States") == "Infinite Loop, Cupertino, CA 95014, United States")
+        #expect(Geocoder.areaDescription(fromFullAddress: "  ") == nil)
+    }
+}

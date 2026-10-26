@@ -1472,36 +1472,70 @@
         }
       }
     },
-    "Claude (Anthropic) bekommt deinen Suchwunsch und die Namen der gefundenen Orte – nicht deinen Standort. Ist Claude nicht erreichbar, übernimmt Apple Intelligence auf dem iPhone. Umstellen kannst du das in den Einstellungen." : {
+    "Claude (Anthropic) bekommt deinen Suchwunsch und die ungefähre Gegend (Straße ohne Hausnummer und Stadt) – nicht deinen genauen Standort. Ist Claude nicht erreichbar, übernimmt Apple Intelligence auf dem iPhone. Umstellen kannst du das in den Einstellungen." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Claude (Anthropic) receives your search and the names of the places found – not your location. If Claude isn’t reachable, Apple Intelligence takes over on your iPhone. You can change this in Settings."
+            "value" : "Claude (Anthropic) receives your search and the rough area (street without house number, and city) – not your exact location. If Claude is unavailable, Apple Intelligence takes over on your iPhone. You can change this in Settings."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Claude (Anthropic) recibe tu búsqueda y los nombres de los sitios encontrados, no tu ubicación. Si Claude no está disponible, Apple Intelligence se encarga en el iPhone. Puedes cambiarlo en Ajustes."
+            "value" : "Claude (Anthropic) recibe tu búsqueda y la zona aproximada (calle sin número y ciudad), no tu ubicación exacta. Si Claude no está disponible, Apple Intelligence se encarga en el iPhone. Puedes cambiarlo en Ajustes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Claude (Anthropic) reçoit ta recherche et les noms des lieux trouvés – pas ta position. Si Claude n’est pas joignable, Apple Intelligence prend le relais sur l’iPhone. Tu peux changer cela dans Réglages."
+            "value" : "Claude (Anthropic) reçoit ta recherche et le secteur approximatif (rue sans numéro et ville) – pas ta position exacte. Si Claude n’est pas disponible, Apple Intelligence prend le relais sur l’iPhone. Tu peux changer cela dans les réglages."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Claude (Anthropic) riceve la tua ricerca e i nomi dei posti trovati, non la tua posizione. Se Claude non è raggiungibile, subentra Apple Intelligence sull’iPhone. Puoi cambiarlo in Impostazioni."
+            "value" : "Claude (Anthropic) riceve la tua ricerca e la zona approssimativa (via senza numero civico e città), non la tua posizione esatta. Se Claude non è disponibile, subentra Apple Intelligence sull’iPhone. Puoi cambiarlo nelle impostazioni."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Claude (Anthropic) aramanı ve bulunan mekânların adlarını alır – konumunu değil. Claude’a ulaşılamazsa iPhone’da Apple Intelligence devreye girer. Bunu Ayarlar’dan değiştirebilirsin."
+            "value" : "Claude (Anthropic) aramanı ve yaklaşık bölgeyi (kapı numarası olmadan sokak ve şehir) alır, tam konumunu almaz. Claude’a ulaşılamazsa iPhone’da Apple Intelligence devreye girer. Bunu Ayarlar’dan değiştirebilirsin."
+          }
+        }
+      }
+    },
+    "Claude kennt hier keine passenden Orte – normale Suche." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude doesn’t know any matching places here – regular search."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude no conoce sitios adecuados aquí: búsqueda normal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude ne connaît pas de lieux adaptés ici – recherche normale."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude non conosce posti adatti qui: ricerca normale."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude burada uygun mekân bilmiyor – normal arama."
           }
         }
       }
@@ -4240,36 +4274,36 @@
         }
       }
     },
-    "Mit KI dauert die Suche etwas länger, die Treffer passen aber besser. Bei Claude gehen dein Suchwunsch und die Namen der gefundenen Orte über unseren Server an Anthropic, nicht dein Standort. Apple Intelligence rechnet direkt auf dem iPhone." : {
+    "Mit KI dauert die Suche etwas länger, die Treffer passen aber besser. Bei Claude gehen dein Suchwunsch und die ungefähre Gegend (Straße ohne Hausnummer und Stadt) über unseren Server an Anthropic, nicht dein genauer Standort. Apple Intelligence rechnet direkt auf dem iPhone." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "With AI, searching takes a little longer, but the results fit better. With Claude, your search and the names of the places found go to Anthropic via our server – your location does not. Apple Intelligence runs directly on your iPhone."
+            "value" : "With AI, searching takes a little longer, but the results fit better. With Claude, your search and the rough area (street without house number, and city) go to Anthropic via our server – your exact location does not. Apple Intelligence runs directly on your iPhone."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con IA la búsqueda tarda un poco más, pero los resultados encajan mejor. Con Claude, tu búsqueda y los nombres de los sitios encontrados van a Anthropic a través de nuestro servidor; tu ubicación no. Apple Intelligence funciona directamente en el iPhone."
+            "value" : "Con IA la búsqueda tarda un poco más, pero los resultados encajan mejor. Con Claude, tu búsqueda y la zona aproximada (calle sin número y ciudad) van a Anthropic a través de nuestro servidor; tu ubicación exacta no. Apple Intelligence funciona directamente en el iPhone."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec l’IA, la recherche prend un peu plus de temps, mais les résultats correspondent mieux. Avec Claude, ta recherche et les noms des lieux trouvés passent par notre serveur vers Anthropic – pas ta position. Apple Intelligence fonctionne directement sur l’iPhone."
+            "value" : "Avec l’IA, la recherche prend un peu plus de temps, mais les résultats correspondent mieux. Avec Claude, ta recherche et le secteur approximatif (rue sans numéro et ville) passent par notre serveur vers Anthropic – pas ta position exacte. Apple Intelligence fonctionne directement sur l’iPhone."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con l’IA la ricerca richiede un po’ più di tempo, ma i risultati sono più pertinenti. Con Claude la tua ricerca e i nomi dei posti trovati vanno ad Anthropic tramite il nostro server, non la tua posizione. Apple Intelligence funziona direttamente sull’iPhone."
+            "value" : "Con l’IA la ricerca richiede un po’ più di tempo, ma i risultati sono più pertinenti. Con Claude la tua ricerca e la zona approssimativa (via senza numero civico e città) vanno ad Anthropic tramite il nostro server, non la tua posizione esatta. Apple Intelligence funziona direttamente sull’iPhone."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "YZ ile arama biraz daha uzun sürer ama sonuçlar daha iyi eşleşir. Claude ile araman ve bulunan mekânların adları sunucumuz üzerinden Anthropic’e gider, konumun gitmez. Apple Intelligence doğrudan iPhone’da çalışır."
+            "value" : "YZ ile arama biraz daha uzun sürer ama sonuçlar daha iyi eşleşir. Claude ile araman ve yaklaşık bölge (kapı numarası olmadan sokak ve şehir) sunucumuz üzerinden Anthropic’e gider, tam konumun gitmez. Apple Intelligence doğrudan iPhone’da çalışır."
           }
         }
       }

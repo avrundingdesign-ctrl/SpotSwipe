@@ -17,7 +17,7 @@ Für Fotos, Bewertungen und die KI-Suche betreiben wir einen eigenen Server (nac
 
 ## 3. Standort
 
-Wenn du den Standortzugriff erlaubst, verwendet die App deinen Standort, um Orte in deiner Nähe zu finden und die Entfernung anzuzeigen. Dafür gehen Suchbegriff und Suchgebiet an Apple Karten (MapKit), wie bei jeder Kartensuche auf dem iPhone. Die Verarbeitung erfolgt durch Apple nach deren Datenschutzbestimmungen (apple.com/de/privacy). Wir selbst erhalten, speichern oder teilen deinen Standort nicht.
+Wenn du den Standortzugriff erlaubst, verwendet die App deinen Standort, um Orte in deiner Nähe zu finden und die Entfernung anzuzeigen. Dafür gehen Suchbegriff und Suchgebiet an Apple Karten (MapKit), wie bei jeder Kartensuche auf dem iPhone. Die Verarbeitung erfolgt durch Apple nach deren Datenschutzbestimmungen (apple.com/de/privacy). Deinen genauen Standort erhalten, speichern oder teilen wir nicht; nur bei der KI-Suche mit Claude geht die ungefähre Gegend über unseren Server an Anthropic (Abschnitt 6).
 
 Der Standortzugriff ist freiwillig: Du kannst jederzeit eine Adresse eingeben oder einen Ort auf der Karte wählen. Die Berechtigung lässt sich in den iOS-Einstellungen widerrufen.
 
@@ -35,7 +35,7 @@ Die Fotos lädt deine App anschließend direkt von Googles Bildservern. Dabei er
 
 Die KI-Suche ist ausgeschaltet, bis du sie über das ✨-Symbol oder in den Einstellungen einschaltest. Beim ersten Einschalten erklärt die App, welche Daten wohin gehen.
 
-Mit Claude (Anthropic PBC, USA): Die App sendet deinen Suchwunsch und anschließend Namen, Kategorien und Kurzadressen der gefundenen Orte samt ihrer Stadt sowie die Sprache deiner Oberfläche über unseren Vermittlungsserver an Anthropic. Dein Standort, dein Name und sonstige Kennungen werden nicht übertragen. Auf unserem Server werden die Inhalte dieser Anfragen nicht gespeichert; protokolliert werden nur die aufgerufene Funktion, der Antwortstatus und die Bearbeitungsdauer. Die Verarbeitung durch Anthropic erfolgt nach deren Datenschutzbestimmungen (anthropic.com/legal/privacy); dabei werden Daten in die USA übertragen.
+Mit Claude (Anthropic PBC, USA): Die App sendet deinen Suchwunsch, die ungefähre Gegend deiner Suche (Straße ohne Hausnummer, Postleitzahl und Stadt des Suchmittelpunkts), den Suchradius und die Sprache deiner Oberfläche über unseren Vermittlungsserver an Anthropic. Claude nennt daraufhin passende Orte, die die App in Apple Karten nachschlägt. Klappt das nicht, sendet die App stattdessen deinen Suchwunsch sowie Namen, Kategorien und Kurzadressen der von Apple Karten gefundenen Orte. Deine genauen Koordinaten, dein Name und sonstige Kennungen werden nicht übertragen. Auf unserem Server werden die Inhalte dieser Anfragen nicht gespeichert; protokolliert werden nur die aufgerufene Funktion, der Antwortstatus und die Bearbeitungsdauer. Die Verarbeitung durch Anthropic erfolgt nach deren Datenschutzbestimmungen (anthropic.com/legal/privacy); dabei werden Daten in die USA übertragen.
 
 Mit Apple Intelligence: Die Verarbeitung findet direkt auf deinem Gerät statt, ohne Übertragung an uns oder an Dritte.
 

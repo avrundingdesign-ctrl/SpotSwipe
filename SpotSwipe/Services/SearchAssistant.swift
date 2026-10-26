@@ -44,8 +44,16 @@ nonisolated enum AIProvider: String, CaseIterable, Identifiable, Sendable {
 protocol SearchAssistant: AnyObject {
     /// Wer zuletzt erfolgreich geantwortet hat (für die Quellenzeile).
     var lastProvider: AIProvider? { get }
+    /// Orte, die die KI selbst kennt (nur Namen, `AIPick.name`) – der Normalfall mit Claude.
+    /// `nil`: kann oder will nicht empfehlen, dann gilt der Weg über `plan` und `rank`.
+    /// Leer: hat geantwortet, kennt aber nichts Passendes.
+    func recommend(_ wish: String, near center: GeoPoint, radius: Double, limit: Int) async -> [AIPick]?
     func plan(for wish: String) async -> AIQueryPlan?
     func rank(_ wish: String, plan: AIQueryPlan, candidates: [Place], limit: Int) async -> [AIPick]?
+}
+
+extension SearchAssistant {
+    func recommend(_ wish: String, near center: GeoPoint, radius: Double, limit: Int) async -> [AIPick]? { nil }
 }
 
 // MARK: - Bevorzugter Anbieter, sonst der andere
@@ -59,6 +67,14 @@ final class FallbackAssistant: SearchAssistant {
     private var order: [(AIProvider, any SearchAssistant)] {
         let preferred = AIProvider(rawValue: UserDefaults.standard.string(forKey: SettingsKey.aiProvider) ?? "") ?? .claude
         return preferred == .claude ? [(.claude, claude), (.apple, apple)] : [(.apple, apple), (.claude, claude)]
+    }
+
+    /// Empfehlungen gibt es nur von Claude – Apple Intelligence kennt zu wenige einzelne Orte.
+    func recommend(_ wish: String, near center: GeoPoint, radius: Double, limit: Int) async -> [AIPick]? {
+        guard order.first?.0 == .claude,
+              let picks = await claude.recommend(wish, near: center, radius: radius, limit: limit) else { return nil }
+        lastProvider = .claude
+        return picks
     }
 
     func plan(for wish: String) async -> AIQueryPlan? {
@@ -84,10 +100,20 @@ final class FallbackAssistant: SearchAssistant {
 
 // MARK: - Claude über den Proxy
 
-/// Claude (Anthropic) über die Endpunkte `/v1/spot-query` und `/v1/spot-rank` des Meanwhile-Proxys.
+/// Claude (Anthropic) über die Endpunkte `/v1/spot-recommend` (Normalfall) sowie `/v1/spot-query` und
+/// `/v1/spot-rank` (Ausweichweg) des Meanwhile-Proxys.
 /// Der API-Key liegt nur auf dem Server; die App weist sich per App Attest aus.
 final class ClaudeAssistant: SearchAssistant {
     private(set) var lastProvider: AIProvider?
+
+    func recommend(_ wish: String, near center: GeoPoint, radius: Double, limit: Int) async -> [AIPick]? {
+        guard AttestService.isSupported, let area = await Geocoder.area(for: center) else { return nil }
+        let payload: [String: any Sendable] = ["text": wish, "area": area, "radiusKm": radius / 1_000, "limit": limit]
+        guard let data = await ProxyService.shared.send("v1/spot-recommend", payload).data,
+              let reply = try? JSONDecoder().decode(SpotRecommendReply.self, from: data) else { return nil }
+        lastProvider = .claude
+        return reply.picks
+    }
 
     func plan(for wish: String) async -> AIQueryPlan? {
         guard AttestService.isSupported,
@@ -100,19 +126,35 @@ final class ClaudeAssistant: SearchAssistant {
     func rank(_ wish: String, plan: AIQueryPlan, candidates: [Place], limit: Int) async -> [AIPick]? {
         guard AttestService.isSupported, !candidates.isEmpty else { return nil }
         var places: [[String: String]] = []
-        var cities: [String: Int] = [:]
         for (index, place) in candidates.enumerated() {
-            if let city = place.city { cities[city, default: 0] += 1 }
             let address: String = place.shortAddress ?? place.address ?? ""
             places.append(["id": "p\(index)", "name": place.name, "category": place.category ?? "", "address": address])
         }
-        // Die Stadt der Treffer (nicht der Standort): damit Claude bekannte Orte der Gegend ergänzen kann.
-        let city = cities.max { $0.value < $1.value }?.key ?? ""
-        let payload: [String: any Sendable] = ["text": wish, "criteria": plan.criteria, "city": city, "limit": limit, "places": places]
+        let payload: [String: any Sendable] = ["text": wish, "criteria": plan.criteria, "limit": limit, "places": places]
         guard let data = await ProxyService.shared.send("v1/spot-rank", payload).data,
               let reply = try? JSONDecoder().decode(SpotRankReply.self, from: data) else { return nil }
         lastProvider = .claude
         return reply.picks(candidateCount: candidates.count)
+    }
+}
+
+nonisolated struct SpotRecommendReply: Decodable, Sendable {
+    nonisolated struct Recommendation: Decodable, Sendable {
+        let name: String
+        let reason: String
+    }
+
+    let places: [Recommendation]
+
+    /// Leere und doppelte Namen fallen heraus.
+    var picks: [AIPick] {
+        var seen = Set<String>()
+        return places.compactMap { place in
+            let name = place.name.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !name.isEmpty, seen.insert(name.lowercased()).inserted else { return nil }
+            let reason = place.reason.trimmingCharacters(in: .whitespacesAndNewlines)
+            return AIPick(suggestedName: name, reason: reason.isEmpty ? nil : reason)
+        }
     }
 }
 
@@ -129,27 +171,19 @@ nonisolated struct SpotQueryReply: Decodable, Sendable {
 nonisolated struct SpotRankReply: Decodable, Sendable {
     nonisolated struct Pick: Decodable, Sendable {
         let id: String
-        var name: String? = nil
         let reason: String
     }
 
     let picks: [Pick]
 
-    /// "p3" → Index 3, "new" mit Name → Vorschlag. Unbekannte oder doppelte Ids fallen heraus.
+    /// "p3" → Index 3. Unbekannte oder doppelte Ids fallen heraus.
     func picks(candidateCount: Int) -> [AIPick] {
         var seen = Set<Int>()
-        var seenNames = Set<String>()
         return picks.compactMap { pick in
-            let trimmed = pick.reason.trimmingCharacters(in: .whitespacesAndNewlines)
-            let reason = trimmed.isEmpty ? nil : trimmed
-            if pick.id == "new" {
-                let name = (pick.name ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-                guard !name.isEmpty, seenNames.insert(name.lowercased()).inserted else { return nil }
-                return AIPick(suggestedName: name, reason: reason)
-            }
             guard pick.id.hasPrefix("p"), let index = Int(pick.id.dropFirst()),
                   index >= 0, index < candidateCount, seen.insert(index).inserted else { return nil }
-            return AIPick(index: index, reason: reason)
+            let reason = pick.reason.trimmingCharacters(in: .whitespacesAndNewlines)
+            return AIPick(index: index, reason: reason.isEmpty ? nil : reason)
         }
     }
 }

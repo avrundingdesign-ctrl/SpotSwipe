@@ -17,7 +17,7 @@ For photos, ratings and AI search we run our own server (the “relay server”)
 
 ## 3. Location
 
-If you allow location access, the app uses your location to find places near you and to show distances. For this, your search term and search area are sent to Apple Maps (MapKit), as with any map search on an iPhone. Apple processes this under its privacy policy (apple.com/privacy). We do not receive, store or share your location.
+If you allow location access, the app uses your location to find places near you and to show distances. For this, your search term and search area are sent to Apple Maps (MapKit), as with any map search on an iPhone. Apple processes this under its privacy policy (apple.com/privacy). We do not receive, store or share your exact location; only AI search with Claude sends the rough area through our server to Anthropic (section 6).
 
 Location access is optional: you can enter an address or pick a place on the map at any time. You can withdraw the permission in the iOS Settings app.
 
@@ -35,7 +35,7 @@ The photos are then loaded by your app directly from Google’s image servers, w
 
 AI search is off until you turn it on with the ✨ symbol or in Settings. The first time, the app explains which data goes where.
 
-With Claude (Anthropic PBC, USA): the app sends your search request and then the names, categories and short addresses of the places found and their city, plus your interface language, through our relay server to Anthropic. Your location, your name and other identifiers are not transmitted. Our server does not store the content of these requests; it only logs the endpoint, the response status and the processing time. Anthropic processes the data under its privacy policy (anthropic.com/legal/privacy), which involves a transfer to the United States.
+With Claude (Anthropic PBC, USA): the app sends your search request, the rough area of your search (street without house number, postcode and city of the search centre), the search radius and your interface language through our relay server to Anthropic. Claude then names matching places, which the app looks up in Apple Maps. If that does not work, the app instead sends your search request plus the names, categories and short addresses of the places Apple Maps found. Your exact coordinates, your name and other identifiers are not transmitted. Our server does not store the content of these requests; it only logs the endpoint, the response status and the processing time. Anthropic processes the data under its privacy policy (anthropic.com/legal/privacy), which involves a transfer to the United States.
 
 With Apple Intelligence: processing happens directly on your device, without any transfer to us or third parties.
 

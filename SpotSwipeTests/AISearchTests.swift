@@ -77,34 +77,54 @@ struct AISearchTests {
         #expect(picks == [AIPick(index: 1, reason: "Gut"), AIPick(index: 0, reason: nil)])
     }
 
-    @Test func suggestionsAreLookedUpAndPlacedWhereTheAIRankedThem() async {
+    @Test func claudeRecommendationsAreLookedUpInAppleMaps() async {
         let lion = Place(id: "lion", name: "Le Lion · Bar de Paris", category: "Bar", location: center)
+        let knuth = Place(id: "knuth", name: "Knuth", category: "Café", location: center)
         let farAway = Place(id: "far", name: "Boilerman Bar", location: GeoPoint(latitude: center.latitude + 0.2, longitude: center.longitude))
-        let service = QueryPlacesService(byQuery: ["Bar": places, "Le Lion": [lion], "Boilerman Bar": [farAway]])
-        let assistant = StubAssistant(plan: AIQueryPlan(queries: ["Bar"], criteria: ""), picks: [
+        let wrong = Place(id: "computer", name: "Green Lion Computer", location: center)
+        let service = QueryPlacesService(byQuery: ["Café Knuth": [knuth], "Le Lion": [wrong, lion], "Boilerman Bar": [farAway]])
+        let assistant = StubAssistant(plan: nil, picks: nil, recommendations: [
+            AIPick(suggestedName: "Café Knuth", reason: "Große Tische, wenig Trubel."),
             AIPick(suggestedName: "Le Lion", reason: "Bekannt für Gin Basil Smash."),
-            AIPick(index: 1, reason: nil),
             AIPick(suggestedName: "Boilerman Bar", reason: "zu weit weg"),
             AIPick(suggestedName: "Gibt es nicht", reason: "erfunden")
         ])
         let model = SwipeDeckViewModel(request: request(useAI: true), service: service, library: FakeLibrary(), assistant: assistant)
         await model.load()
 
-        #expect(service.queries == ["Bar", "Le Lion", "Boilerman Bar", "Gibt es nicht"])
-        #expect(model.deck.map(\.id) == ["lion", "b", "a", "c"], "Vorschlag an seiner Stelle, Erfundenes und Entferntes raus")
-        #expect(model.deck.first?.aiReason == "Bekannt für Gin Basil Smash.")
+        #expect(Set(service.queries) == ["Café Knuth", "Le Lion", "Boilerman Bar", "Gibt es nicht"], "Nur die Namen, keine Kategoriesuche")
+        #expect(model.deck.map(\.id) == ["knuth", "lion"], "Nur echte Treffer im Umkreis, in Claudes Reihenfolge, nichts aufgefüllt")
+        #expect(model.deck.first?.aiReason == "Große Tische, wenig Trubel.")
+        #expect(model.aiProvider == .claude)
+        #expect(assistant.calls == 0, "Kein Umweg über Suchbegriffe und Sortieren")
     }
 
-    @Test func rankReplyReadsSuggestions() throws {
-        let json = #"{"picks":[{"id":"new","name":"Le Lion","reason":"Klassiker"},{"id":"new","name":"","reason":"x"},{"id":"new","name":"le lion","reason":"doppelt"},{"id":"p0","reason":"Gut"}]}"#
-        let picks = try JSONDecoder().decode(SpotRankReply.self, from: Data(json.utf8)).picks(candidateCount: 1)
-        #expect(picks == [AIPick(suggestedName: "Le Lion", reason: "Klassiker"), AIPick(index: 0, reason: "Gut")])
+    @Test func recommendationsWithoutMatchesFallBackToNormalSearch() async {
+        let service = QueryPlacesService(byQuery: ["ruhiges Café zum Arbeiten": places])
+        let assistant = StubAssistant(plan: AIQueryPlan(queries: ["Café"], criteria: ""), picks: nil,
+                                      recommendations: [AIPick(suggestedName: "Gibt es nicht", reason: nil)])
+        let model = SwipeDeckViewModel(request: request(useAI: true), service: service, library: FakeLibrary(), assistant: assistant)
+        await model.load()
+
+        #expect(model.deck.map(\.id) == ["a", "b", "c"])
+        #expect(model.notice != nil)
+        #expect(model.aiProvider == nil)
+        #expect(assistant.calls == 0, "Normale Suche, kein zweiter KI-Versuch")
     }
 
-    @Test func suggestedNamesMatchOnlyTheRightPlace() {
+    @Test func recommendReplyDropsEmptyAndDuplicateNames() throws {
+        let json = #"{"places":[{"name":"Knuth","reason":"Ruhig"},{"name":" ","reason":"x"},{"name":"knuth","reason":"doppelt"},{"name":"Codos","reason":"  "}]}"#
+        let picks = try JSONDecoder().decode(SpotRecommendReply.self, from: Data(json.utf8)).picks
+        #expect(picks == [AIPick(suggestedName: "Knuth", reason: "Ruhig"), AIPick(suggestedName: "Codos", reason: nil)])
+    }
+
+    @Test func recommendedNamesMatchOnlyTheRightPlace() {
         #expect(SwipeDeckViewModel.namesMatch("Le Lion · Bar de Paris", "Le Lion"))
-        #expect(SwipeDeckViewModel.namesMatch("Boilerman", "Boilerman Bar"))
+        #expect(SwipeDeckViewModel.namesMatch("Knuth", "Café Knuth"))
+        #expect(SwipeDeckViewModel.namesMatch("Clockers", "Clockers Bar"))
+        #expect(SwipeDeckViewModel.namesMatch("Zoë II - Sofabar", "Zoe"))
         #expect(SwipeDeckViewModel.namesMatch("Café Koppel", "Cafe Koppel"))
+        #expect(!SwipeDeckViewModel.namesMatch("Green Lion Computer", "Le Lion"))
         #expect(!SwipeDeckViewModel.namesMatch("Café Panda", "Café Koppel"))
         #expect(!SwipeDeckViewModel.namesMatch("Bar 12", "Bar"), "Nur Allerweltswörter zählen nicht")
     }
@@ -176,10 +196,17 @@ final class StubAssistant: SearchAssistant {
     private(set) var rankedCriteria: String?
     private let stubPlan: AIQueryPlan?
     private let stubPicks: [AIPick]?
+    private let stubRecommendations: [AIPick]?
 
-    init(plan: AIQueryPlan?, picks: [AIPick]?) {
+    init(plan: AIQueryPlan?, picks: [AIPick]?, recommendations: [AIPick]? = nil) {
         stubPlan = plan
         stubPicks = picks
+        stubRecommendations = recommendations
+    }
+
+    func recommend(_ wish: String, near center: GeoPoint, radius: Double, limit: Int) async -> [AIPick]? {
+        if stubRecommendations != nil { lastProvider = .claude }
+        return stubRecommendations
     }
 
     func plan(for wish: String) async -> AIQueryPlan? {
