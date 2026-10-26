@@ -1,0 +1,73 @@
+name: SpotSwipe
+options:
+  deploymentTarget:
+    iOS: "26.0"
+  developmentLanguage: de
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  SpotSwipe:
+    type: application
+    platform: iOS
+    configFiles:
+      Debug: Config/App.xcconfig
+      Release: Config/App.xcconfig
+    sources:
+      - path: SpotSwipe
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(SPOTSWIPE_BUNDLE_ID)
+        DEVELOPMENT_TEAM: $(SPOTSWIPE_TEAM_ID)
+        CODE_SIGN_ENTITLEMENTS: $(SPOTSWIPE_ENTITLEMENTS)
+        CODE_SIGN_STYLE: Automatic
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+        SWIFT_APPROACHABLE_CONCURRENCY: YES
+        ENABLE_PREVIEWS: YES
+    info:
+      path: SpotSwipe/Info.plist
+      properties:
+        CFBundleDisplayName: SpotSwipe
+        CFBundleDevelopmentRegion: de
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        GooglePlacesAPIKey: $(GOOGLE_PLACES_API_KEY)
+        SpotSwipeCloudKitEnabled: $(SPOTSWIPE_CLOUDKIT)
+        NSLocationWhenInUseUsageDescription: SpotSwipe nutzt deinen Standort, um Orte in deiner Nähe zu finden.
+        ITSAppUsesNonExemptEncryption: false
+        UILaunchScreen:
+          UIColorName: LaunchBackground
+        UIBackgroundModes:
+          - remote-notification
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+  SpotSwipeTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: SpotSwipeTests
+    dependencies:
+      - target: SpotSwipe
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: de.example.spotswipe.tests
+        SWIFT_APPROACHABLE_CONCURRENCY: YES
+schemes:
+  SpotSwipe:
+    build:
+      targets:
+        SpotSwipe: all
+        SpotSwipeTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - SpotSwipeTests

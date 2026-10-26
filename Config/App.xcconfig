@@ -1,0 +1,12 @@
+// Standardwerte. Eigene Werte gehören in Config/Secrets.xcconfig (nicht eingecheckt).
+SPOTSWIPE_BUNDLE_ID = de.example.spotswipe
+SPOTSWIPE_TEAM_ID =
+GOOGLE_PLACES_API_KEY =
+
+// iCloud-Sync braucht einen bezahlten Developer-Account (Team-ID).
+// Zum Einschalten in Secrets.xcconfig: SPOTSWIPE_CLOUDKIT = YES und
+// SPOTSWIPE_ENTITLEMENTS = SpotSwipe/SpotSwipe.entitlements
+SPOTSWIPE_CLOUDKIT = NO
+SPOTSWIPE_ENTITLEMENTS =
+
+#include? "Secrets.xcconfig"

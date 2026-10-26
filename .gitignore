@@ -1,0 +1,10 @@
+# Xcode
+*.xcodeproj/
+xcuserdata/
+DerivedData/
+build/
+*.xcworkspace/
+.DS_Store
+
+# Lokale Geheimnisse (API-Key, Team-ID)
+Config/Secrets.xcconfig
